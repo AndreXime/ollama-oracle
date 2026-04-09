@@ -1,0 +1,126 @@
+{
+	"empresa": "NexusCloud Solutions",
+	"mapa_sistemas_version": "2026-Q1",
+	"sistemas": [
+		{
+			"id": "NCS-AUTH-GATEWAY",
+			"nome": "Auth Gateway & Session Broker",
+			"stack": ["Node.js 22 LTS", "Fastify", "Redis Cluster (sessão)", "OpenID Connect"],
+			"protocolos": ["HTTPS", "gRPC (interno para NCS-USER-DIRECTORY)"],
+			"endpoints_internos": [
+				"POST https://auth.internal.nexuscloud/v1/token (JWT RS256, TTL access 15m)",
+				"POST https://auth.internal.nexuscloud/v1/introspect",
+				"GET https://auth.internal.nexuscloud/healthz"
+			],
+			"responsavel_tecnico": "Marina Duarte (Principal Engineer — Identity)",
+			"criticidade": "Tier-0",
+			"sla_disponibilidade_pct": 99.95,
+			"observacoes": "Emissão de JWT com escopos namespaced ncs:*; integração MFA obrigatória para VPN ZTNA."
+		},
+		{
+			"id": "NCS-MSG-ROUTER",
+			"nome": "Message Router & Queue Orchestrator",
+			"stack": ["Go 1.22", "NATS JetStream", "Kubernetes (HPA por CPU e lag de fila)"],
+			"protocolos": ["gRPC", "NATS"],
+			"endpoints_internos": [
+				"grpc://msg-router.internal.nexuscloud:9443 v1.Router/Dispatch",
+				"metrics: :9090/metrics (Prometheus)"
+			],
+			"responsavel_tecnico": "Ricardo Vale (Staff Engineer — Plataforma)",
+			"criticidade": "Tier-0",
+			"sla_disponibilidade_pct": 99.9,
+			"observacoes": "Workers com idempotência via chave dedupe_store (Redis); incidente INC-2026-402 correlacionado."
+		},
+		{
+			"id": "NCS-BILLING-API",
+			"nome": "Billing & Usage Metering API",
+			"stack": ["Go 1.22", "Postgres 16 (particionamento mensal)", "gRPC + REST facade"],
+			"protocolos": ["gRPC", "HTTPS"],
+			"endpoints_internos": [
+				"grpc://billing.internal.nexuscloud:9100 billing.v1.Usage/RecordEvent",
+				"POST https://billing.internal.nexuscloud/rest/v1/invoices/export"
+			],
+			"responsavel_tecnico": "Helena K. Sato (Engineering Manager — FinOps)",
+			"criticidade": "Tier-1",
+			"sla_disponibilidade_pct": 99.85,
+			"observacoes": "Transações financeiras exigem idempotência-Key header; leitura preferencial via réplica analytics."
+		},
+		{
+			"id": "NCS-USER-DIRECTORY",
+			"nome": "User Directory & Org Graph",
+			"stack": ["Node.js", "Postgres", "LDAP sync connector"],
+			"protocolos": ["gRPC", "LDAPS"],
+			"endpoints_internos": [
+				"grpc://udir.internal.nexuscloud:9200 directory.v1.Profile/GetBySubject",
+				"internal cron: /jobs/sync-ldap"
+			],
+			"responsavel_tecnico": "Marina Duarte (delegação técnica: André P. Lima, Senior Engineer)",
+			"criticidade": "Tier-1",
+			"sla_disponibilidade_pct": 99.9,
+			"observacoes": "Fonte de verdade para escopos JWT; alterações propagadas ao NCS-AUTH-GATEWAY em até 60s."
+		},
+		{
+			"id": "NCS-EXPENSE-PORTAL",
+			"nome": "Expense & Certification Reimbursement Portal",
+			"stack": ["Node.js", "React", "Postgres", "integração RHIS"],
+			"protocolos": ["HTTPS", "webhook JSON assinado HMAC"],
+			"endpoints_internos": [
+				"POST https://expense.internal.nexuscloud/api/v2/claims/submit",
+				"GET https://expense.internal.nexuscloud/api/v2/claims/{id}/status"
+			],
+			"responsavel_tecnico": "Camila Rocha (Tech Lead — Internal Tools)",
+			"criticidade": "Tier-2",
+			"sla_disponibilidade_pct": 99.5,
+			"observacoes": "Fluxo RH-TEC-14 para reembolso AWS/Azure; não armazena segredos de nuvem."
+		},
+		{
+			"id": "NCS-AUDIT-SINK",
+			"nome": "Audit Event Sink & Compliance Router",
+			"stack": ["Go", "Kafka-compatible log bus", "S3-compatible object lock"],
+			"protocolos": ["HTTPS", "Protobuf sobre fila"],
+			"endpoints_internos": [
+				"POST https://audit.internal.nexuscloud/v1/events/ingest",
+				"batch consumer: consumer-group ncs-audit-primary"
+			],
+			"responsavel_tecnico": "Otávio Mendes (Staff Engineer — Segurança)",
+			"criticidade": "Tier-1",
+			"sla_disponibilidade_pct": 99.9,
+			"observacoes": "Idempotência por (tenant_id, event_id); retenção mínima 7 anos para trilhas financeiras."
+		},
+		{
+			"id": "NCS-EDGE-INGRESS",
+			"nome": "Edge Ingress & WAF Policy Controller",
+			"stack": ["Kubernetes", "Envoy", "cert-manager", "OPA sidecars"],
+			"protocolos": ["HTTPS", "gRPC"],
+			"endpoints_internos": ["control plane: https://edge-cp.internal.nexuscloud/v1/policies/publish"],
+			"responsavel_tecnico": "Ricardo Vale (SRE Lead — Plataforma)",
+			"criticidade": "Tier-0",
+			"sla_disponibilidade_pct": 99.95,
+			"observacoes": "Rota pública para APIs cliente; incidente INC-2026-418 envolveu *timeout* TLS e *retry storm*."
+		},
+		{
+			"id": "NCS-DATA-PIPELINE",
+			"nome": "Analytics ETL & Feature Store",
+			"stack": ["Python 3.12", "Spark batch", "Postgres + columnar export"],
+			"protocolos": ["HTTPS", "JDBC"],
+			"endpoints_internos": [
+				"POST https://pipeline.internal.nexuscloud/jobs/trigger",
+				"read replica: jdbc:postgresql://ro-analytics.internal:5432/ncs_dw"
+			],
+			"responsavel_tecnico": "Helena K. Sato (owner produto; execução: squad Data Platform)",
+			"criticidade": "Tier-2",
+			"sla_disponibilidade_pct": 99.0,
+			"observacoes": "INC-2026-431: *deadlock* em job de agregação impactou faturamento downstream até NCS-BILLING-API."
+		}
+	],
+	"documents": [
+		"NCS-AUTH-GATEWAY (Auth Gateway & Session Broker) — NexusCloud Solutions. Stack: Node.js 22 LTS, Fastify, Redis Cluster para sessão, OpenID Connect. Exposição interna: POST https://auth.internal.nexuscloud/v1/token emitindo JWT RS256 com TTL de 15 minutos para access token; POST /v1/introspect para validação server-to-server; GET /healthz. Canal gRPC interno para NCS-USER-DIRECTORY (directory.v1). Responsável técnico: Marina Duarte, Principal Engineer Identity. Criticidade Tier-0, SLA 99,95%. MFA corporativo e escopos JWT namespaced (ncs:billing.read, ncs:audit.write) são mandatórios para VPN ZTNA e alinhados à política de RH 2026.",
+		"NCS-MSG-ROUTER (Message Router & Queue Orchestrator) — Go 1.22, NATS JetStream, Kubernetes com HPA por CPU e lag de fila. Endpoint gRPC principal: grpc://msg-router.internal.nexuscloud:9443 v1.Router/Dispatch; métricas Prometheus :9090/metrics. Padrão de idempotência: chave dedupe_store em Redis para reentrega segura de mensagens. Responsável: Ricardo Vale, Staff Engineer Plataforma. Tier-0, SLA 99,9%. Post-mortem INC-2026-402 documentou vazamento de memória em worker de fila por loop de reprocessamento sem backoff exponencial — baseline de correção aplicável a todos os consumidores NCS-*.",
+		"NCS-BILLING-API (Billing & Usage Metering) — Go 1.22, Postgres 16 com particionamento mensal de tabelas de uso. gRPC billing.v1.Usage/RecordEvent em grpc://billing.internal.nexuscloud:9100; fachada REST POST /rest/v1/invoices/export. Header obrigatório Idempotency-Key para gravações financeiras. Helena K. Sato, EM FinOps, owner. Tier-1, SLA 99,85%. Dependência upstream: agregados do NCS-DATA-PIPELINE; em INC-2026-431 atraso de job gerou reconciliação manual e *credit notes* temporários.",
+		"NCS-USER-DIRECTORY — Node.js, Postgres, conector LDAPS. gRPC directory.v1.Profile/GetBySubject em grpc://udir.internal.nexuscloud:9200. Propagação de alterações de escopo para NCS-AUTH-GATEWAY em até 60 segundos. André P. Lima opera execução diária sob supervisão de Marina Duarte. Tier-1. Base para emissão de claims JWT e RBAC em clusters Kubernetes (namespaces ncs-prod, ncs-staging).",
+		"NCS-EXPENSE-PORTAL — Node.js, React, Postgres, integração RHIS. API POST https://expense.internal.nexuscloud/api/v2/claims/submit e GET .../status para fluxo RH-TEC-14 (reembolso certificações AWS/Azure). Camila Rocha, Tech Lead Internal Tools. Tier-2. Webhooks assinados HMAC; sem armazenamento de credenciais de nuvem; alinhado às políticas de segurança da informação NexusCloud 2026.",
+		"NCS-AUDIT-SINK — Go, barramento tipo Kafka, armazenamento WORM S3-compatible. POST https://audit.internal.nexuscloud/v1/events/ingest; consumer-group ncs-audit-primary. Idempotência estrita por tupla (tenant_id, event_id). Otávio Mendes, Staff Segurança. Tier-1. Trilhas obrigatórias para eventos de NCS-BILLING-API e acessos privilegiados ao NCS-AUTH-GATEWAY.",
+		"NCS-EDGE-INGRESS — Kubernetes, Envoy, cert-manager, OPA. Plano de controle https://edge-cp.internal.nexuscloud/v1/policies/publish. Ricardo Vale, SRE Plataforma. Tier-0. INC-2026-418: *retry storm* de clientes móveis após rotação de certificado; mitigação incluiu jitter em cliente e limitação de *concurrency* no *retry* HTTP/2.",
+		"NCS-DATA-PIPELINE — Python 3.12, Spark, Postgres/columnar. Jobs via POST https://pipeline.internal.nexuscloud/jobs/trigger; réplica JDBC ro-analytics.internal. Squad Data Platform. Tier-2. INC-2026-431: *deadlock* Postgres em job de agregação mensal; *mitigation*: *lock_timeout* e reordenação de *join*; comunicação com Billing para janela de reconciliação."
+	]
+}
