@@ -1,6 +1,9 @@
 import cors from "@fastify/cors";
 import Fastify from "fastify";
 import { config } from "./config.js";
+import { registerChatRoutes } from "./modules/chat/index.js";
+import { getVectorStore } from "./shared/chroma.js";
+import { createChatModel, createEmbeddings } from "./shared/ollama.js";
 
 export async function buildApp() {
 	const app = Fastify({ logger: true });
@@ -13,12 +16,17 @@ export async function buildApp() {
 		},
 	});
 
+	const embeddings = createEmbeddings();
+	const vectorStore = await getVectorStore(embeddings);
+	const chatModel = createChatModel();
+
 	app.get("/", async () => ({
 		service: "ollama-oracle-api",
-		endpoints: { health: "GET /health" },
+		endpoints: { chat: "POST /chat", health: "GET /health" },
 	}));
 
 	app.get("/health", async () => ({ ok: true }));
 
+	await registerChatRoutes(app, { vectorStore, chatModel });
 	return app;
 }
