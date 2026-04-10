@@ -1,55 +1,13 @@
-import { existsSync } from "node:fs";
-import { dirname, isAbsolute, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
-import { config as loadEnv } from "dotenv";
+import { isAbsolute, resolve } from "node:path";
 import { z } from "zod";
+import {
+	parseChatPromptMaxChunks,
+	parseCorsOrigins,
+	parseOptionalNonNegativeNumber,
+} from "./parsers.js";
+import { serverPackageDir } from "./paths.js";
 
-function findMonorepoRoot(startDir: string): string {
-	let d = resolve(startDir);
-	for (let i = 0; i < 15; i++) {
-		if (existsSync(resolve(d, "server/package.json")) && existsSync(resolve(d, "client/package.json"))) {
-			return d;
-		}
-		const parent = dirname(d);
-		if (parent === d) break;
-		d = parent;
-	}
-	return resolve(process.cwd());
-}
-
-const startDir = dirname(fileURLToPath(import.meta.url));
-const repoRoot = findMonorepoRoot(startDir);
-const serverPackageDir = resolve(repoRoot, "server");
-
-loadEnv({ path: resolve(serverPackageDir, ".env") });
-
-/** Distância máxima no Chroma (menor = mais similar). `null` = não filtra (usa os top-K como antes). */
-function parseOptionalNonNegativeNumber(raw: string | undefined): number | null {
-	const v = raw?.trim();
-	if (v === undefined || v === "") return null;
-	const n = Number(v);
-	return Number.isFinite(n) && n >= 0 ? n : null;
-}
-
-/** Teto de trechos no prompt do chat (evita saturar modelos locais). Vazio = 6. */
-function parseChatPromptMaxChunks(raw: string | undefined): number {
-	const v = raw?.trim();
-	if (v === undefined || v === "") return 6;
-	const n = Number(v);
-	if (!Number.isFinite(n)) return 6;
-	return Math.min(24, Math.max(1, Math.floor(n)));
-}
-
-function parseCorsOrigins(raw: string | undefined): readonly string[] | null {
-	const v = raw?.trim();
-	if (v === undefined || v === "" || v === "*") return null;
-	return v
-		.split(",")
-		.map((s) => s.trim())
-		.filter((s) => s.length > 0);
-}
-
-const configSchema = z
+export const configSchema = z
 	.object({
 		PORT: z.coerce.number().int().min(1).max(65535),
 		OLLAMA_BASE_URL: z.string().url(),
@@ -106,5 +64,7 @@ const configSchema = z
 			corsOrigins: env.CORS_ORIGINS,
 		} as const;
 	});
+
+export type AppConfig = z.infer<typeof configSchema>;
 
 export const config = configSchema.parse(process.env);

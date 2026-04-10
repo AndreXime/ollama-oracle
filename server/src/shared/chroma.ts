@@ -1,7 +1,7 @@
 import { Chroma } from "@langchain/community/vectorstores/chroma";
 import type { OllamaEmbeddings } from "@langchain/ollama";
 import { ChromaClient } from "chromadb";
-import { config } from "../config.js";
+import { config } from "../config/index.js";
 
 /** chromadb v3 deprecates `path`; LangChain still forwards `url` as `path` unless we pass `index`. */
 function chromaClientArgsFromUrl(urlString: string): { ssl: boolean; host: string; port: number } {

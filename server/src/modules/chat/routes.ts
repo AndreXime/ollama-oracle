@@ -3,7 +3,7 @@ import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import type { Chroma } from "@langchain/community/vectorstores/chroma";
 import type { ChatOllama } from "@langchain/ollama";
-import { config } from "../../config.js";
+import { config } from "../../config/index.js";
 import { streamRagChat } from "./ragChat.js";
 
 const bodySchema = z.object({

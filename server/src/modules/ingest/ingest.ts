@@ -1,7 +1,7 @@
 import { readdir } from "node:fs/promises";
 import { join, relative } from "node:path";
 import { Document } from "@langchain/core/documents";
-import { config } from "../../config.js";
+import { config } from "../../config/index.js";
 import { createEmptyChromaStore, deleteCollectionIfExists } from "../../shared/chroma.js";
 import { createEmbeddings } from "../../shared/ollama.js";
 import { csvRawToTextParts } from "./csvText.js";
