@@ -31,6 +31,15 @@ function parseOptionalNonNegativeNumber(raw: string | undefined): number | null 
 	return Number.isFinite(n) && n >= 0 ? n : null;
 }
 
+/** Teto de trechos no prompt do chat (evita saturar modelos locais). Vazio = 6. */
+function parseChatPromptMaxChunks(raw: string | undefined): number {
+	const v = raw?.trim();
+	if (v === undefined || v === "") return 6;
+	const n = Number(v);
+	if (!Number.isFinite(n)) return 6;
+	return Math.min(24, Math.max(1, Math.floor(n)));
+}
+
 function parseCorsOrigins(raw: string | undefined): readonly string[] | null {
 	const v = raw?.trim();
 	if (v === undefined || v === "" || v === "*") return null;
@@ -65,6 +74,11 @@ const configSchema = z
 		MAX_FILE_BYTES: z.coerce.number().int().positive(),
 		EMBED_BATCH_SIZE: z.coerce.number().int().positive(),
 		CHAT_TOP_K: z.coerce.number().int().min(1).max(50),
+		CHAT_PROMPT_MAX_CHUNKS: z
+			.string()
+			.optional()
+			.transform((v) => parseChatPromptMaxChunks(v))
+			.pipe(z.number().int().min(1).max(24)),
 		INGEST_ADD_CONCURRENCY: z.coerce.number().int().min(1).max(32),
 		CORS_ORIGINS: z
 			.string()
@@ -87,6 +101,7 @@ const configSchema = z
 			maxFileBytes: env.MAX_FILE_BYTES,
 			embedBatchSize: env.EMBED_BATCH_SIZE,
 			chatTopK: env.CHAT_TOP_K,
+			chatPromptMaxChunks: env.CHAT_PROMPT_MAX_CHUNKS,
 			ingestAddConcurrency: env.INGEST_ADD_CONCURRENCY,
 			corsOrigins: env.CORS_ORIGINS,
 		} as const;

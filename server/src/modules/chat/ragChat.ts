@@ -47,8 +47,10 @@ export async function* streamRagChat(
 	log?: FastifyBaseLogger,
 	signal?: AbortSignal,
 ): AsyncGenerator<RagStreamEvent, void, undefined> {
-	log?.info("rag: similaritySearchWithScore (embed + Chroma)");
-	const scored = await vectorStore.similaritySearchWithScore(question, topK);
+	const promptChunks = Math.min(topK, config.chatPromptMaxChunks);
+	const retrievalLimit = Math.min(36, Math.max(Math.max(topK, config.chatPromptMaxChunks) * 3, 12));
+	log?.info({ retrievalLimit, promptChunks, topK }, "rag: similaritySearchWithScore (embed + Chroma)");
+	const scored = await vectorStore.similaritySearchWithScore(question.trim(), retrievalLimit);
 	const maxD = config.chromaMaxRetrievalDistance;
 	const maxBest = config.chromaMaxBestDistance;
 	const bestDistance = scored[0]?.[1];
@@ -75,10 +77,14 @@ export async function* streamRagChat(
 	}
 
 	docs = dedupeDocumentsByContent(docs);
+	docs = docs.slice(0, promptChunks);
 
 	if (scored.length > 0 && maxD !== null && !bestTooWeak) {
 		const best = scored[0]?.[1];
-		log?.info({ bestDistance: best, maxDistance: maxD, kept: docs.length }, "rag: distance filter");
+		log?.info(
+			{ bestDistance: best, maxDistance: maxD, kept: docs.length, promptChunks },
+			"rag: distance filter + prompt chunk cap",
+		);
 	}
 
 	if (docs.length === 0) {
