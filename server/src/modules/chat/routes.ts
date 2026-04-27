@@ -1,5 +1,4 @@
-import { Readable } from "node:stream";
-import type { FastifyInstance } from "fastify";
+import type { Express, Request, Response } from "express";
 import { z } from "zod";
 import type { Chroma } from "@langchain/community/vectorstores/chroma";
 import type { ChatOllama } from "@langchain/ollama";
@@ -23,81 +22,79 @@ export interface ChatDeps {
 	readonly chatModel: ChatOllama;
 }
 
-export async function registerChatRoutes(app: FastifyInstance, deps: ChatDeps): Promise<void> {
-	app.post("/chat", async (request, reply) => {
-		const parsed = bodySchema.safeParse(request.body);
+export function registerChatRoutes(app: Express, deps: ChatDeps): void {
+	app.post("/chat", async (req: Request, res: Response) => {
+		const parsed = bodySchema.safeParse(req.body);
 		if (!parsed.success) {
-			return reply.status(400).send({
+			res.status(400).json({
 				error: "Payload inválido",
 				details: parsed.error.flatten(),
 			});
+			return;
 		}
 		const { question } = parsed.data;
 
 		try {
-			request.log.info({ qLen: question.length }, "chat: start");
+			req.log.info({ qLen: question.length }, "chat: start");
 			const abort = new AbortController();
 			const onAborted = () => abort.abort();
 			const onResClose = () => {
-				if (!reply.raw.writableEnded) abort.abort();
+				if (!res.writableEnded) abort.abort();
 			};
-			request.raw.on("aborted", onAborted);
-			reply.raw.on("close", onResClose);
+			req.on("aborted", onAborted);
+			res.on("close", onResClose);
 
-			const ndjson = Readable.from(
-				(async function* () {
-					try {
-						for await (const ev of streamRagChat(
-							deps.vectorStore,
-							deps.chatModel,
-							question,
-							config.chatTopK,
-							request.log,
-							abort.signal,
-						)) {
-							if (abort.signal.aborted) return;
-							yield Buffer.from(`${JSON.stringify(ev)}\n`, "utf8");
-						}
-					} catch (e) {
-						if (abort.signal.aborted && (request.raw.aborted || reply.raw.destroyed)) {
-							request.log.info("chat: client disconnected — abort stream");
-							return;
-						}
-						if (isAbortError(e)) {
-							request.log.warn("chat: stream aborted");
-							return;
-						}
-						request.log.error(e);
-						yield Buffer.from(
-							`${JSON.stringify({
-								type: "error",
-								message: e instanceof Error ? e.message : "Erro ao gerar resposta",
-							})}\n`,
-							"utf8",
-						);
-					} finally {
-						request.raw.off("aborted", onAborted);
-						reply.raw.off("close", onResClose);
-					}
-				})(),
-			);
+			res.setHeader("Content-Type", "application/x-ndjson; charset=utf-8");
+			res.setHeader("Cache-Control", "no-cache");
 
-			return reply
-				.header("Content-Type", "application/x-ndjson; charset=utf-8")
-				.header("Cache-Control", "no-cache")
-				.send(ndjson);
+			try {
+				for await (const ev of streamRagChat(
+					deps.vectorStore,
+					deps.chatModel,
+					question,
+					config.chatTopK,
+					req.log,
+					abort.signal,
+				)) {
+					if (abort.signal.aborted) break;
+					res.write(`${JSON.stringify(ev)}\n`);
+				}
+			} catch (e) {
+				if (abort.signal.aborted && (req.aborted || res.destroyed)) {
+					req.log.info("chat: client disconnected — abort stream");
+				} else if (isAbortError(e)) {
+					req.log.warn("chat: stream aborted");
+				} else {
+					req.log.error(e);
+					res.write(
+						`${JSON.stringify({
+							type: "error",
+							message: e instanceof Error ? e.message : "Erro ao gerar resposta",
+						})}\n`,
+					);
+				}
+			} finally {
+				req.off("aborted", onAborted);
+				res.off("close", onResClose);
+				if (!res.writableEnded) res.end();
+			}
 		} catch (e) {
 			if (isAbortError(e)) {
-				request.log.warn("chat: timeout (Ollama)");
-				return reply.status(504).send({
-					error:
-						"Tempo esgotado ao falar com o Ollama. Verifique se o serviço está ativo.",
+				req.log.warn("chat: timeout (Ollama)");
+				if (!res.headersSent) {
+					res.status(504).json({
+						error:
+							"Tempo esgotado ao falar com o Ollama. Verifique se o serviço está ativo.",
+					});
+				}
+				return;
+			}
+			req.log.error(e);
+			if (!res.headersSent) {
+				res.status(500).json({
+					error: e instanceof Error ? e.message : "Erro interno no chat",
 				});
 			}
-			request.log.error(e);
-			return reply.status(500).send({
-				error: e instanceof Error ? e.message : "Erro interno no chat",
-			});
 		}
 	});
 }

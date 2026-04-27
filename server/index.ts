@@ -3,10 +3,11 @@ import { config } from "./src/config/index.js";
 
 const app = await buildApp();
 
-try {
-	await app.listen({ port: config.port, host: "0.0.0.0" });
-	console.info(`API em http://0.0.0.0:${config.port} (POST /chat)`);
-} catch (err) {
-	app.log.error(err);
+const server = app.listen(config.port, "0.0.0.0", () => {
+	console.info(`API em http://0.0.0.0:${config.port}`);
+});
+
+server.on("error", (err) => {
+	console.error(err);
 	process.exit(1);
-}
+});

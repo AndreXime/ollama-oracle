@@ -13,7 +13,7 @@ function stripPinoNoiseLine(line: string): string {
 	}
 }
 
-/** Repasse direto em `Fastify({ logger: appLoggerOptions })`. */
+/** Opções repassadas a `pino(appLoggerOptions)`. */
 export const appLoggerOptions: LoggerOptions = {
 	base: null,
 	hooks: {

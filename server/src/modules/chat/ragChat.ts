@@ -1,7 +1,7 @@
 import type { Chroma } from "@langchain/community/vectorstores/chroma";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import type { ChatOllama } from "@langchain/ollama";
-import type { FastifyBaseLogger } from "fastify";
+import type { Logger } from "pino";
 import { config } from "../../config/index.js";
 import {
 	buildConversationalUserMessage,
@@ -30,7 +30,7 @@ export async function* streamRagChat(
 	chatModel: ChatOllama,
 	question: string,
 	topK: number,
-	log?: FastifyBaseLogger,
+	log?: Logger,
 	signal?: AbortSignal,
 ): AsyncGenerator<RagStreamEvent, void, undefined> {
 	const promptChunks = Math.min(topK, config.chatPromptMaxChunks);

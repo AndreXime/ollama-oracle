@@ -1,10 +1,14 @@
-import type { FastifyInstance } from "fastify";
+import type { Express } from "express";
 
-export function registerRootRoutes(app: FastifyInstance): void {
-	app.get("/", async () => ({
-		service: "ollama-oracle-api",
-		endpoints: { chat: "POST /chat", health: "GET /health" },
-	}));
+export function registerRootRoutes(app: Express): void {
+	app.get("/", (_req, res) => {
+		res.json({
+			service: "ollama-oracle-api",
+			endpoints: { chat: "POST /chat", health: "GET /health" },
+		});
+	});
 
-	app.get("/health", async () => ({ ok: true }));
+	app.get("/health", (_req, res) => {
+		res.json({ ok: true });
+	});
 }
