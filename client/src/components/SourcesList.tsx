@@ -13,8 +13,8 @@ export function SourcesList({ sources }: SourcesListProps) {
 		<div className="mt-3 rounded-xl border border-surface-border bg-slate-900/40 px-3 py-2">
 			<p className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">Fontes</p>
 			<ul className="space-y-2">
-				{sources.map((s, i) => (
-					<li key={`${s.source}-${i}`} className="text-sm">
+				{sources.map((s) => (
+					<li key={`${s.source}::${s.excerpt}`} className="text-sm">
 						<span className="text-accent font-medium">{s.source}</span>
 						<p className="text-slate-400 mt-0.5 line-clamp-3">{s.excerpt}</p>
 					</li>

@@ -9,10 +9,7 @@ interface MessageBubbleProps {
 
 function AssistantTypingDots() {
 	return (
-		<span
-			className="inline-flex items-end gap-1.5 min-h-[1.25em] py-0.5"
-			aria-hidden
-		>
+		<span className="inline-flex items-end gap-1.5 min-h-[1.25em] py-0.5" aria-hidden>
 			<span className="assistant-typing-dot" />
 			<span className="assistant-typing-dot" />
 			<span className="assistant-typing-dot" />
@@ -36,9 +33,9 @@ export function MessageBubble({ role, content, isPending = false }: MessageBubbl
 				{isUser ? (
 					<p className="whitespace-pre-wrap">{content}</p>
 				) : showAssistantPending ? (
-					<p className="m-0" aria-live="polite" aria-label="Assistente está respondendo">
+					<div className="m-0" role="status" aria-live="polite" aria-label="Assistente está respondendo">
 						<AssistantTypingDots />
-					</p>
+					</div>
 				) : (
 					<div className="prose prose-invert prose-sm max-w-none prose-p:my-2 prose-headings:mt-3 prose-headings:mb-1 prose-ul:my-2 prose-pre:bg-slate-900 prose-pre:border prose-pre:border-surface-border">
 						<ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
