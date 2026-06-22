@@ -39,29 +39,19 @@ export const useChatMessagesStore = create<ChatMessagesState>((set) => ({
 	appendAssistantText: (assistantId, text) =>
 		set((s) => ({
 			messages: s.messages.map((msg) =>
-				msg.id === assistantId
-					? { ...msg, content: msg.content + text, isStarted: true as const }
-					: msg,
+				msg.id === assistantId ? { ...msg, content: msg.content + text, isStarted: true as const } : msg,
 			),
 		})),
 
 	setAssistantSources: (assistantId, sources) =>
 		set((s) => ({
-			messages: s.messages.map((msg) =>
-				msg.id === assistantId ? { ...msg, sources } : msg,
-			),
+			messages: s.messages.map((msg) => (msg.id === assistantId ? { ...msg, sources } : msg)),
 		})),
 
 	removeEmptyAssistantPlaceholder: (assistantId) =>
 		set((s) => ({
 			messages: s.messages.filter(
-				(msg) =>
-					!(
-						msg.id === assistantId &&
-						msg.role === "assistant" &&
-						msg.isStarted === false &&
-						msg.content === ""
-					),
+				(msg) => !(msg.id === assistantId && msg.role === "assistant" && msg.isStarted === false && msg.content === ""),
 			),
 		})),
 

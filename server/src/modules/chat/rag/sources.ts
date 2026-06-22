@@ -11,8 +11,7 @@ export function mapDocumentsToSources(docs: Document[]): readonly RagSource[] {
 		const source = typeof meta?.source === "string" ? meta.source : "desconhecido";
 		const partIndex = typeof meta?.partIndex === "number" ? meta.partIndex : null;
 		const chunkIndex = typeof meta?.chunkIndex === "number" ? meta.chunkIndex : null;
-		const sourceWithLoc =
-			partIndex !== null && chunkIndex !== null ? `${source}#p${partIndex}-c${chunkIndex}` : source;
+		const sourceWithLoc = partIndex !== null && chunkIndex !== null ? `${source}#p${partIndex}-c${chunkIndex}` : source;
 		const excerpt = doc.pageContent.length > 320 ? `${doc.pageContent.slice(0, 317)}...` : doc.pageContent;
 		return { source: sourceWithLoc, excerpt };
 	});

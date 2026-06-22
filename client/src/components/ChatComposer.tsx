@@ -33,12 +33,7 @@ export function ChatComposer({ input, loading, onInputChange, onSend }: ChatComp
 					onChange={(e) => onInputChange(e.target.value)}
 					onKeyDown={onKeyDown}
 				/>
-				<button
-					type="button"
-					className={buttonClass}
-					disabled={loading || !input.trim()}
-					onClick={onSend}
-				>
+				<button type="button" className={buttonClass} disabled={loading || !input.trim()} onClick={onSend}>
 					Enviar
 				</button>
 			</div>
