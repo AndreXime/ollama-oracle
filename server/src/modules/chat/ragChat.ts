@@ -1,22 +1,18 @@
 import type { Chroma } from "@langchain/community/vectorstores/chroma";
-import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+import { type BaseMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
 import type { ChatOllama } from "@langchain/ollama";
 import type { Logger } from "pino";
 import { config } from "../../config/index.js";
+import { buildRetrievalQuery, type ChatTurn, chatHistoryToMessages } from "./chatHistory.js";
 import {
 	buildConversationalUserMessage,
 	buildRagUserMessage,
 	CORPORATE_CONVERSATIONAL_PROMPT,
 	CORPORATE_SYSTEM_PROMPT,
 } from "./prompts.js";
-import { extractTextFromMessageContent } from "./rag/llmContent.js";
 import { lexicalOverlapScore, pickLexicallyMatchingDocs } from "./rag/lexicalMatch.js";
-import {
-	contentKey,
-	dedupeScoredByContent,
-	minDistanceByContent,
-	type ScoredDoc,
-} from "./rag/scoredDocuments.js";
+import { extractTextFromMessageContent } from "./rag/llmContent.js";
+import { contentKey, dedupeScoredByContent, minDistanceByContent, type ScoredDoc } from "./rag/scoredDocuments.js";
 import { mapDocumentsToSources, type RagSource } from "./rag/sources.js";
 
 export type { RagSource } from "./rag/sources.js";
@@ -25,18 +21,27 @@ export type RagStreamEvent =
 	| { readonly type: "delta"; readonly text: string }
 	| { readonly type: "done"; readonly sources: readonly RagSource[] };
 
+function buildLlmMessages(systemPrompt: string, history: readonly ChatTurn[], userContent: string): BaseMessage[] {
+	return [new SystemMessage(systemPrompt), ...chatHistoryToMessages(history), new HumanMessage(userContent)];
+}
+
 export async function* streamRagChat(
 	vectorStore: Chroma,
 	chatModel: ChatOllama,
 	question: string,
 	topK: number,
+	history: readonly ChatTurn[] = [],
 	log?: Logger,
 	signal?: AbortSignal,
 ): AsyncGenerator<RagStreamEvent, void, undefined> {
 	const promptChunks = Math.min(topK, config.chatPromptMaxChunks);
 	const retrievalLimit = Math.min(36, Math.max(Math.max(topK, config.chatPromptMaxChunks) * 3, 12));
-	log?.info({ retrievalLimit, promptChunks, topK }, "rag: similaritySearchWithScore (embed + Chroma)");
-	const scored = await vectorStore.similaritySearchWithScore(question.trim(), retrievalLimit);
+	const retrievalQuery = buildRetrievalQuery(question, history);
+	log?.info(
+		{ retrievalLimit, promptChunks, topK, historyTurns: history.length },
+		"rag: similaritySearchWithScore (embed + Chroma)",
+	);
+	const scored = await vectorStore.similaritySearchWithScore(retrievalQuery, retrievalLimit);
 	const maxD = config.chromaMaxRetrievalDistance;
 	const maxBest = config.chromaMaxBestDistance;
 	const bestDistance = scored[0]?.[1];
@@ -48,7 +53,10 @@ export async function* streamRagChat(
 	if (bestTooWeak) {
 		log?.info({ bestDistance, maxBest }, "rag: best match above max-best — skip RAG");
 		const distByContent = minDistanceByContent(scored);
-		const lexicalDocs = pickLexicallyMatchingDocs(question, scored.map(([d]) => d));
+		const lexicalDocs = pickLexicallyMatchingDocs(
+			question,
+			scored.map(([d]) => d),
+		);
 		if (lexicalDocs.length > 0) {
 			log?.info(
 				{ picked: lexicalDocs.length, scoredCount: scored.length, bestDistance, maxBest },
@@ -89,12 +97,9 @@ export async function* streamRagChat(
 	}
 
 	if (docs.length === 0) {
-		log?.info(
-			{ scoredCount: scored.length, maxDistance: maxD },
-			"rag: no chunks after filter — conversational",
-		);
+		log?.info({ scoredCount: scored.length, maxDistance: maxD }, "rag: no chunks after filter — conversational");
 		const userContent = buildConversationalUserMessage(question);
-		const messages = [new SystemMessage(CORPORATE_CONVERSATIONAL_PROMPT), new HumanMessage(userContent)];
+		const messages = buildLlmMessages(CORPORATE_CONVERSATIONAL_PROMPT, history, userContent);
 		const stream = await chatModel.stream(messages, { signal });
 		for await (const chunk of stream) {
 			const text = extractTextFromMessageContent(chunk);
@@ -108,7 +113,7 @@ export async function* streamRagChat(
 	log?.info({ docCount: docs.length }, "rag: llm stream");
 	const contextBlocks = docs.map((d) => d.pageContent);
 	const userContent = buildRagUserMessage(question, contextBlocks);
-	const messages = [new SystemMessage(CORPORATE_SYSTEM_PROMPT), new HumanMessage(userContent)];
+	const messages = buildLlmMessages(CORPORATE_SYSTEM_PROMPT, history, userContent);
 
 	const stream = await chatModel.stream(messages, { signal });
 	for await (const chunk of stream) {

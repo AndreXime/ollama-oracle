@@ -1,12 +1,19 @@
-import type { Express, Request, Response } from "express";
-import { z } from "zod";
 import type { Chroma } from "@langchain/community/vectorstores/chroma";
 import type { ChatOllama } from "@langchain/ollama";
+import type { Express, Request, Response } from "express";
+import { z } from "zod";
 import { config } from "../../config/index.js";
+import { normalizeChatHistory } from "./chatHistory.js";
 import { streamRagChat } from "./ragChat.js";
+
+const historyEntrySchema = z.object({
+	role: z.enum(["user", "assistant"]),
+	content: z.string().min(1).max(8000),
+});
 
 const bodySchema = z.object({
 	question: z.string().min(1).max(8000),
+	history: z.array(historyEntrySchema).max(20).optional(),
 });
 
 function isAbortError(e: unknown): boolean {
@@ -32,10 +39,11 @@ export function registerChatRoutes(app: Express, deps: ChatDeps): void {
 			});
 			return;
 		}
-		const { question } = parsed.data;
+		const { question, history: rawHistory } = parsed.data;
+		const history = normalizeChatHistory(rawHistory ?? [], config.chatHistoryMaxMessages);
 
 		try {
-			req.log.info({ qLen: question.length }, "chat: start");
+			req.log.info({ qLen: question.length, historyTurns: history.length }, "chat: start");
 			const abort = new AbortController();
 			const onAborted = () => abort.abort();
 			const onResClose = () => {
@@ -53,6 +61,7 @@ export function registerChatRoutes(app: Express, deps: ChatDeps): void {
 					deps.chatModel,
 					question,
 					config.chatTopK,
+					history,
 					req.log,
 					abort.signal,
 				)) {
@@ -83,8 +92,7 @@ export function registerChatRoutes(app: Express, deps: ChatDeps): void {
 				req.log.warn("chat: timeout (Ollama)");
 				if (!res.headersSent) {
 					res.status(504).json({
-						error:
-							"Tempo esgotado ao falar com o Ollama. Verifique se o serviço está ativo.",
+						error: "Tempo esgotado ao falar com o Ollama. Verifique se o serviço está ativo.",
 					});
 				}
 				return;

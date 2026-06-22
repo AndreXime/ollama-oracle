@@ -1,14 +1,10 @@
 import { isAbsolute, resolve } from "node:path";
 import { z } from "zod";
-import {
-	parseChatPromptMaxChunks,
-	parseCorsOrigins,
-	parseOptionalNonNegativeNumber,
-} from "./parsers.js";
+import { parseChatPromptMaxChunks, parseCorsOrigins, parseOptionalNonNegativeNumber } from "./parsers.js";
 import { serverPackageDir } from "./paths.js";
 
 export const configSchema = z
-	.object({
+	.looseObject({
 		PORT: z.coerce.number().int().min(1).max(65535),
 		OLLAMA_BASE_URL: z.string().url(),
 		OLLAMA_CHAT_MODEL: z.string().min(1),
@@ -37,6 +33,16 @@ export const configSchema = z
 			.optional()
 			.transform((v) => parseChatPromptMaxChunks(v))
 			.pipe(z.number().int().min(1).max(24)),
+		CHAT_HISTORY_MAX_MESSAGES: z
+			.string()
+			.optional()
+			.transform((v) => {
+				if (v === undefined || v.trim() === "") return 6;
+				const n = Number(v);
+				if (!Number.isFinite(n)) return 6;
+				return Math.min(20, Math.max(0, Math.floor(n)));
+			})
+			.pipe(z.number().int().min(0).max(20)),
 		INGEST_ADD_CONCURRENCY: z.coerce.number().int().min(1).max(32),
 		CORS_ORIGINS: z
 			.string()
@@ -44,7 +50,6 @@ export const configSchema = z
 			.transform((v) => parseCorsOrigins(v))
 			.pipe(z.array(z.string().url()).nullable()),
 	})
-	.passthrough()
 	.transform((env) => {
 		return {
 			port: env.PORT,
@@ -60,6 +65,7 @@ export const configSchema = z
 			embedBatchSize: env.EMBED_BATCH_SIZE,
 			chatTopK: env.CHAT_TOP_K,
 			chatPromptMaxChunks: env.CHAT_PROMPT_MAX_CHUNKS,
+			chatHistoryMaxMessages: env.CHAT_HISTORY_MAX_MESSAGES,
 			ingestAddConcurrency: env.INGEST_ADD_CONCURRENCY,
 			corsOrigins: env.CORS_ORIGINS,
 		} as const;
