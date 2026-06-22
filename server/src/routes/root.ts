@@ -1,4 +1,5 @@
-import type { Express } from "express";
+import type { Express, Request, Response } from "express";
+import { runHealthChecks } from "../shared/health.js";
 
 export function registerRootRoutes(app: Express): void {
 	app.get("/", (_req, res) => {
@@ -8,7 +9,8 @@ export function registerRootRoutes(app: Express): void {
 		});
 	});
 
-	app.get("/health", (_req, res) => {
-		res.json({ ok: true });
+	app.get("/health", async (_req: Request, res: Response) => {
+		const report = await runHealthChecks();
+		res.status(report.ok ? 200 : 503).json(report);
 	});
 }
