@@ -14,7 +14,8 @@
 		"build": "bun run --filter nexus-rag-oracle-client build && bun run --filter nexus-rag-oracle-server build",
 		"ingest": "bun run --filter nexus-rag-oracle-server ingest",
 		"start": "bun run --filter nexus-rag-oracle-client preview",
-		"start:api": "bun dist/server/index.js",
+		"start:api": "bun run --filter nexus-rag-oracle-server start",
+		"test": "bun run --filter nexus-rag-oracle-server test && bun run --filter nexus-rag-oracle-client test",
 		"format": "biome check --write --no-errors-on-unmatched ."
 	},
 	"devDependencies": {
