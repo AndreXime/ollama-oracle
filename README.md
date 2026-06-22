@@ -1,18 +1,18 @@
 # Ollama Oracle
 
-Chatbot corporativo com **RAG local**: documentos em `server/data_source`, embeddings e busca vetorial no **ChromaDB**, geração com **Ollama**. Monorepo em **Bun** com API (**Fastify** + TypeScript) e interface (**React** + **Vite** + **Tailwind CSS v4**).
+Chatbot corporativo com **RAG local**: documentos em `server/data_source`, embeddings e busca vetorial no **ChromaDB**, geração com **Ollama**. Monorepo em **Bun** com API (**Express** + TypeScript) e interface (**React** + **Vite** + **Tailwind CSS v4**).
 
-Para detalhes “por baixo dos panos” (ingest, partes vs chunks, RAG/streaming, env vars), veja [UNDER_THE_HOOD.md](UNDER_THE_HOOD.md).
+Para detalhes "por baixo dos panos" (ingest, partes vs chunks, RAG/streaming, env vars), veja [UNDER_THE_HOOD.md](UNDER_THE_HOOD.md).
 
 ## Stack
 
 | Camada | Tecnologias |
 |--------|-------------|
 | Runtime / pacotes | Bun |
-| API | Fastify 5, Zod, LangChain.js, `@langchain/ollama`, `@langchain/community` (Chroma) |
+| API | Express 5, Pino, Zod, LangChain.js, `@langchain/ollama`, `@langchain/community` (Chroma) |
 | IA | Ollama — chat `llama3.2:3b`, embeddings `nomic-embed-text` |
 | Vetores | ChromaDB |
-| UI | React, Vite , TailwindCSS |
+| UI | React, Vite, TailwindCSS |
 
 ## Pré-requisitos
 
@@ -63,3 +63,21 @@ API e client em paralelo. Frontend em `http://127.0.0.1:5173`. API em `http://12
 ```bash
 bun run dev
 ```
+
+## Produção
+
+```bash
+bun run build
+bun run start:api   # API em server/dist/index.js
+bun run start       # preview do client (Vite)
+```
+
+## Testes
+
+```bash
+bun run test
+```
+
+## Health check
+
+`GET /health` verifica conectividade com Ollama (modelos de chat e embed) e Chroma (coleção configurada). Retorna `200` quando tudo está ok, `503` caso contrário.
