@@ -1,4 +1,5 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { isNdjsonEvent, readNdjsonStream } from "../lib/ndjsonStream";
 import type { ChatMessage } from "../stores/chatMessagesStore";
 import { useChatMessagesStore } from "../stores/chatMessagesStore";
 import { ChatComposer } from "./ChatComposer";
@@ -6,26 +7,10 @@ import { MessageBubble } from "./MessageBubble";
 import { NexusLogo } from "./NexusLogo";
 import { SourcesList } from "./SourcesList";
 
-type NdjsonEvent =
-	| { type: "delta"; text: string }
-	| { type: "done"; sources: { source: string; excerpt: string }[] }
-	| { type: "error"; message: string };
-
 const apiBase = import.meta.env.VITE_API_BASE ?? "http://127.0.0.1:3001";
 
-function isNdjsonEvent(v: unknown): v is NdjsonEvent {
-	if (!v || typeof v !== "object" || !("type" in v)) return false;
-	const t = (v as { type: unknown }).type;
-	if (t === "delta") {
-		return "text" in v && typeof (v as { text?: unknown }).text === "string";
-	}
-	if (t === "done") {
-		return "sources" in v && Array.isArray((v as { sources?: unknown }).sources);
-	}
-	if (t === "error") {
-		return "message" in v && typeof (v as { message?: unknown }).message === "string";
-	}
-	return false;
+function isAbortError(e: unknown): boolean {
+	return e instanceof Error && e.name === "AbortError";
 }
 
 export function ChatWindow() {
@@ -34,6 +19,13 @@ export function ChatWindow() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const bottomRef = useRef<HTMLDivElement>(null);
+	const abortRef = useRef<AbortController | null>(null);
+
+	useEffect(() => {
+		return () => {
+			abortRef.current?.abort();
+		};
+	}, []);
 
 	const scrollToBottom = useCallback(() => {
 		bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -45,6 +37,10 @@ export function ChatWindow() {
 		setInput("");
 		setError(null);
 
+		abortRef.current?.abort();
+		const abort = new AbortController();
+		abortRef.current = abort;
+
 		const {
 			addMessages,
 			appendAssistantText,
@@ -52,6 +48,10 @@ export function ChatWindow() {
 			removeEmptyAssistantPlaceholder,
 			completeAssistantPendingStart,
 		} = useChatMessagesStore.getState();
+
+		const history = messages
+			.filter((m) => m.content.trim().length > 0)
+			.map((m) => ({ role: m.role, content: m.content }));
 
 		const userMsg: ChatMessage = {
 			id: crypto.randomUUID(),
@@ -73,7 +73,8 @@ export function ChatWindow() {
 			const res = await fetch(`${apiBase}/chat`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json", Accept: "application/x-ndjson" },
-				body: JSON.stringify({ question: q }),
+				body: JSON.stringify({ question: q, history }),
+				signal: abort.signal,
 			});
 
 			if (!res.ok) {
@@ -88,95 +89,45 @@ export function ChatWindow() {
 				throw new Error("Resposta sem corpo (stream)");
 			}
 
-			const dec = new TextDecoder();
-			let buf = "";
-
-			const appendAssistant = (text: string) => {
-				appendAssistantText(assistantId, text);
-				requestAnimationFrame(scrollToBottom);
-			};
-
-			const attachSources = (sources: readonly { source: string; excerpt: string }[]) => {
-				setAssistantSources(assistantId, sources);
-			};
-
-			for (;;) {
-				const { done, value } = await reader.read();
-				if (done) break;
-				buf += dec.decode(value, { stream: true });
-
-				for (;;) {
-					const nl = buf.indexOf("\n");
-					if (nl < 0) break;
-					const line = buf.slice(0, nl).trim();
-					buf = buf.slice(nl + 1);
-					if (!line) continue;
-
-					let parsed: unknown;
-					try {
-						parsed = JSON.parse(line) as unknown;
-					} catch {
-						throw new Error("Linha NDJSON inválida na resposta");
-					}
-					if (!isNdjsonEvent(parsed)) {
-						throw new Error("Evento de stream desconhecido");
-					}
-					if (parsed.type === "delta") {
-						appendAssistant(parsed.text);
-					} else if (parsed.type === "done") {
-						attachSources(parsed.sources);
+			await readNdjsonStream(
+				reader,
+				(ev) => {
+					if (!isNdjsonEvent(ev)) return;
+					if (ev.type === "delta") {
+						appendAssistantText(assistantId, ev.text);
+						requestAnimationFrame(scrollToBottom);
+					} else if (ev.type === "done") {
+						setAssistantSources(assistantId, ev.sources);
 					} else {
-						throw new Error(parsed.message);
+						throw new Error(ev.message);
 					}
-				}
-			}
-
-			buf += dec.decode();
-			const tail = buf.trim();
-			if (tail) {
-				let parsed: unknown;
-				try {
-					parsed = JSON.parse(tail) as unknown;
-				} catch {
-					throw new Error("Resposta NDJSON incompleta");
-				}
-				if (isNdjsonEvent(parsed)) {
-					if (parsed.type === "delta") {
-						appendAssistant(parsed.text);
-					} else if (parsed.type === "done") {
-						attachSources(parsed.sources);
-					} else {
-						throw new Error(parsed.message);
-					}
-				}
-			}
+				},
+				abort.signal,
+			);
 		} catch (e) {
+			if (isAbortError(e)) return;
 			setError((e as Error).message);
 			removeEmptyAssistantPlaceholder(assistantId);
 		} finally {
+			if (abortRef.current === abort) {
+				abortRef.current = null;
+			}
 			completeAssistantPendingStart(assistantId);
 			setLoading(false);
 			requestAnimationFrame(scrollToBottom);
 		}
-	}, [input, loading, scrollToBottom]);
+	}, [input, loading, messages, scrollToBottom]);
 
 	const hasMessages = messages.length > 0;
 
 	const composerBlock = (
 		<>
-			<ChatComposer
-				input={input}
-				loading={loading}
-				onInputChange={setInput}
-				onSend={() => void send()}
-			/>
+			<ChatComposer input={input} loading={loading} onInputChange={setInput} onSend={() => void send()} />
 			<p className="text-center text-xs leading-snug text-slate-500 px-1 pt-2.5">
-				A IA pode errar ou inventar detalhes. Confira respostas importantes nas fontes e na base
-				indexada.
+				A IA pode errar ou inventar detalhes. Confira respostas importantes nas fontes e na base indexada.
 			</p>
 			<p className="text-center text-xs leading-snug text-slate-500 px-1">
-				As respostas usam apenas o contexto indexado da pasta{" "}
-				<code className="text-slate-500">data_source</code>.
+				As respostas usam apenas o contexto indexado da pasta <code className="text-slate-500">data_source</code>.
 			</p>
 		</>
 	);
@@ -205,9 +156,7 @@ export function ChatWindow() {
 									<MessageBubble
 										role={msg.role}
 										content={msg.content}
-										isPending={
-											msg.role === "assistant" && msg.isStarted === false && loading
-										}
+										isPending={msg.role === "assistant" && msg.isStarted === false && loading}
 									/>
 									{msg.role === "assistant" && msg.sources && <SourcesList sources={msg.sources} />}
 								</div>
