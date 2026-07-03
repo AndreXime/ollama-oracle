@@ -13,7 +13,8 @@ import {
 import { lexicalOverlapScore, pickLexicallyMatchingDocs } from "./rag/lexicalMatch.js";
 import { extractTextFromMessageContent } from "./rag/llmContent.js";
 import { contentKey, dedupeScoredByContent, minDistanceByContent, type ScoredDoc } from "./rag/scoredDocuments.js";
-import { mapDocumentsToSources, type RagSource } from "./rag/sources.js";
+import { formatDocumentSource, mapDocumentsToSources, type RagSource } from "./rag/sources.js";
+import type { RagTurnMode, RagTurnStats } from "./rag/turnStats.js";
 
 type RagStreamEvent =
 	| { readonly type: "delta"; readonly text: string }
@@ -21,6 +22,29 @@ type RagStreamEvent =
 
 function buildLlmMessages(systemPrompt: string, history: readonly ChatTurn[], userContent: string): BaseMessage[] {
 	return [new SystemMessage(systemPrompt), ...chatHistoryToMessages(history), new HumanMessage(userContent)];
+}
+
+function buildTurnStats(
+	mode: RagTurnMode,
+	retrievalQuery: string,
+	scoredCount: number,
+	bestDistance: number | undefined,
+	ranked: readonly ScoredDoc[],
+	sources: readonly RagSource[],
+): RagTurnStats {
+	return {
+		mode,
+		retrievalQuery,
+		scoredCount,
+		bestDistance: typeof bestDistance === "number" ? bestDistance : null,
+		keptChunks: ranked.length,
+		sourceCount: sources.length,
+		sources,
+		chunks: ranked.map(([doc, distance]) => ({
+			source: formatDocumentSource(doc),
+			distance,
+		})),
+	};
 }
 
 export async function* streamRagChat(
@@ -31,6 +55,7 @@ export async function* streamRagChat(
 	history: readonly ChatTurn[] = [],
 	log?: AppLogger,
 	signal?: AbortSignal,
+	onTurnComplete?: (stats: RagTurnStats) => void,
 ): AsyncGenerator<RagStreamEvent, void, undefined> {
 	const promptChunks = Math.min(topK, config.chatPromptMaxChunks);
 	const retrievalLimit = Math.min(36, Math.max(Math.max(topK, config.chatPromptMaxChunks) * 3, 12));
@@ -47,6 +72,7 @@ export async function* streamRagChat(
 	const bestTooWeak = maxBest !== null && typeof bestDistance === "number" && bestDistance > maxBest;
 
 	let ranked: ScoredDoc[];
+	let turnMode: RagTurnMode = "rag";
 	if (bestTooWeak) {
 		log?.info({ bestDistance, maxBest }, "rag: best match above max-best — skip RAG");
 		const distByContent = minDistanceByContent(scored);
@@ -59,11 +85,13 @@ export async function* streamRagChat(
 				{ picked: lexicalDocs.length, scoredCount: scored.length, bestDistance, maxBest },
 				"rag: best match above max-best — keep lexical matches",
 			);
+			turnMode = "lexical_fallback";
 			ranked = lexicalDocs.map((doc) => {
 				const d = distByContent.get(contentKey(doc)) ?? Number.POSITIVE_INFINITY;
 				return [doc, d] as const;
 			});
 		} else {
+			turnMode = "conversational";
 			ranked = [];
 		}
 	} else {
@@ -90,6 +118,9 @@ export async function* streamRagChat(
 
 	if (docs.length === 0) {
 		log?.info({ scoredCount: scored.length, maxDistance: maxD }, "rag: no chunks after filter — conversational");
+		const stats = buildTurnStats(turnMode, retrievalQuery, scored.length, bestDistance, ranked, []);
+		onTurnComplete?.(stats);
+
 		const userContent = buildConversationalUserMessage(question);
 		const messages = buildLlmMessages(CORPORATE_CONVERSATIONAL_PROMPT, history, userContent);
 		const stream = await chatModel.stream(messages, { signal });
@@ -103,6 +134,10 @@ export async function* streamRagChat(
 	}
 
 	log?.info({ docCount: docs.length }, "rag: llm stream");
+	const sources = mapDocumentsToSources(docs);
+	const stats = buildTurnStats(turnMode, retrievalQuery, scored.length, bestDistance, ranked, sources);
+	onTurnComplete?.(stats);
+
 	const contextBlocks = docs.map((d) => d.pageContent);
 	const userContent = buildRagUserMessage(question, contextBlocks);
 	const messages = buildLlmMessages(CORPORATE_SYSTEM_PROMPT, history, userContent);
@@ -114,5 +149,5 @@ export async function* streamRagChat(
 	}
 
 	log?.info("rag: stream done");
-	yield { type: "done", sources: mapDocumentsToSources(docs) };
+	yield { type: "done", sources };
 }

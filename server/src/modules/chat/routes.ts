@@ -6,6 +6,8 @@ import { z } from "zod";
 import { config } from "../../config/env.js";
 import type { AppEnv } from "../../app.js";
 import { normalizeChatHistory } from "./chatHistory.js";
+import { appendRagConversationLog } from "./ragConversationLog.js";
+import type { RagTurnStats } from "./rag/turnStats.js";
 import { streamRagChat } from "./ragChat.js";
 
 const MAX_BODY_BYTES = 1024 * 1024;
@@ -55,6 +57,7 @@ export function registerChatRoutes(app: Hono<AppEnv>, deps: ChatDeps): void {
 		const { question, history: rawHistory } = parsed.data;
 		const history = normalizeChatHistory(rawHistory ?? [], config.chatHistoryMaxMessages);
 		const log = c.var.logger;
+		const requestId = c.var.requestId;
 
 		try {
 			log.info({ qLen: question.length, historyTurns: history.length }, "chat: start");
@@ -69,6 +72,11 @@ export function registerChatRoutes(app: Hono<AppEnv>, deps: ChatDeps): void {
 				c.req.raw.signal.addEventListener("abort", onAbort);
 				s.onAbort(onAbort);
 
+				let answer = "";
+				let turnStats: RagTurnStats | undefined;
+				let streamError: string | undefined;
+				const aborted = () => abort.signal.aborted || s.aborted;
+
 				try {
 					for await (const ev of streamRagChat(
 						deps.vectorStore,
@@ -78,26 +86,43 @@ export function registerChatRoutes(app: Hono<AppEnv>, deps: ChatDeps): void {
 						history,
 						log,
 						abort.signal,
+						(s) => {
+							turnStats = s;
+						},
 					)) {
-						if (abort.signal.aborted || s.aborted) break;
+						if (aborted()) break;
+						if (ev.type === "delta") answer += ev.text;
 						await s.write(`${JSON.stringify(ev)}\n`);
 					}
 				} catch (e) {
-					if (abort.signal.aborted && (c.req.raw.signal.aborted || s.aborted)) {
+					if (aborted() && (c.req.raw.signal.aborted || s.aborted)) {
 						log.info("chat: client disconnected — abort stream");
 					} else if (isAbortError(e)) {
 						log.warn("chat: stream aborted");
 					} else {
 						log.error(e);
+						streamError = e instanceof Error ? e.message : "Erro ao gerar resposta";
 						await s.write(
 							`${JSON.stringify({
 								type: "error",
-								message: e instanceof Error ? e.message : "Erro ao gerar resposta",
+								message: streamError,
 							})}\n`,
 						);
 					}
 				} finally {
 					c.req.raw.signal.removeEventListener("abort", onAbort);
+					if (turnStats !== undefined) {
+						void appendRagConversationLog({
+							requestId,
+							at: new Date().toISOString(),
+							question,
+							answer,
+							historyTurns: history.length,
+							aborted: aborted(),
+							error: streamError,
+							rag: turnStats,
+						}).catch((err) => log.error(err, "rag: falha ao gravar log de conversa"));
+					}
 				}
 			});
 		} catch (e) {

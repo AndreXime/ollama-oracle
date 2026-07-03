@@ -55,6 +55,11 @@ const configSchema = z
 			.optional()
 			.transform((v) => parseCorsOrigins(v))
 			.pipe(z.array(z.string().url()).nullable()),
+		RAG_LOG_DIR: z
+			.string()
+			.min(1)
+			.optional()
+			.transform((v) => resolveServerPath(v ?? "./rag_logs")),
 	})
 	.transform((env) => {
 		return {
@@ -74,6 +79,7 @@ const configSchema = z
 			chatHistoryMaxMessages: env.CHAT_HISTORY_MAX_MESSAGES,
 			ingestAddConcurrency: env.INGEST_ADD_CONCURRENCY,
 			corsOrigins: env.CORS_ORIGINS,
+			ragLogDir: env.RAG_LOG_DIR,
 		} as const;
 	});
 

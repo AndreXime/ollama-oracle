@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { config } from "./config/env.js";
+import type { RequestIdVariables } from "hono/request-id";
 import type { AppLogger } from "./plugins/logger.js";
 import { registerChatRoutes } from "./modules/chat/routes.js";
 import { registerCors } from "./plugins/cors.js";
@@ -8,7 +9,7 @@ import { registerHeathRoutes } from "./modules/health/route.js";
 import { getVectorStore } from "./shared/chroma.js";
 import { createChatModel, createEmbeddings } from "./shared/ollama.js";
 
-type AppVariables = {
+type AppVariables = RequestIdVariables & {
 	readonly logger: AppLogger;
 };
 
