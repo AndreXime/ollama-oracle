@@ -47,7 +47,6 @@ export async function* streamRagChat(
 	const bestTooWeak = maxBest !== null && typeof bestDistance === "number" && bestDistance > maxBest;
 
 	let ranked: ScoredDoc[];
-	let sortLexicalFirst = false;
 	if (bestTooWeak) {
 		log?.info({ bestDistance, maxBest }, "rag: best match above max-best — skip RAG");
 		const distByContent = minDistanceByContent(scored);
@@ -60,7 +59,6 @@ export async function* streamRagChat(
 				{ picked: lexicalDocs.length, scoredCount: scored.length, bestDistance, maxBest },
 				"rag: best match above max-best — keep lexical matches",
 			);
-			sortLexicalFirst = true;
 			ranked = lexicalDocs.map((doc) => {
 				const d = distByContent.get(contentKey(doc)) ?? Number.POSITIVE_INFINITY;
 				return [doc, d] as const;
@@ -73,16 +71,12 @@ export async function* streamRagChat(
 	}
 
 	ranked = dedupeScoredByContent(ranked);
-	if (sortLexicalFirst) {
-		ranked.sort((a, b) => {
-			const oa = lexicalOverlapScore(question, a[0]);
-			const ob = lexicalOverlapScore(question, b[0]);
-			if (ob !== oa) return ob - oa;
-			return a[1] - b[1];
-		});
-	} else {
-		ranked.sort((a, b) => a[1] - b[1]);
-	}
+	ranked.sort((a, b) => {
+		const oa = lexicalOverlapScore(question, a[0]);
+		const ob = lexicalOverlapScore(question, b[0]);
+		if (ob !== oa) return ob - oa;
+		return a[1] - b[1];
+	});
 	ranked = ranked.slice(0, promptChunks);
 	const docs = ranked.map(([d]) => d);
 

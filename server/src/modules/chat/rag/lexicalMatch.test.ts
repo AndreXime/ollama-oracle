@@ -12,6 +12,14 @@ describe("lexicalOverlapScore", () => {
 		const doc = new Document({ pageContent: "qualquer texto" });
 		expect(lexicalOverlapScore("o que é", doc)).toBe(0);
 	});
+
+	test("aceita prefixo parcial (typo) e metadata source", () => {
+		const doc = new Document({
+			pageContent: "Perfil da empresa brasileira",
+			metadata: { source: "institucional_nexuscloud.md" },
+		});
+		expect(lexicalOverlapScore("nome empres", doc)).toBeGreaterThan(0);
+	});
 });
 
 describe("pickLexicallyMatchingDocs", () => {

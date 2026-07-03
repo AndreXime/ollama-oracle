@@ -3,10 +3,10 @@ import type { Document } from "@langchain/core/documents";
 export function lexicalOverlapScore(question: string, doc: Document): number {
 	const tokens = tokenizeForLexicalMatch(question);
 	if (tokens.length === 0) return 0;
-	const hay = doc.pageContent.toLowerCase();
+	const hay = docSearchHaystack(doc);
 	let n = 0;
 	for (const t of tokens) {
-		if (hay.includes(t)) n += 1;
+		if (tokenMatchesHay(t, hay)) n += 1;
 	}
 	return n;
 }
@@ -17,15 +17,30 @@ export function pickLexicallyMatchingDocs(question: string, docs: readonly Docum
 	const minHits = tokens.length >= 2 ? 2 : 1;
 	const out: Document[] = [];
 	for (const doc of docs) {
-		const hay = doc.pageContent.toLowerCase();
+		const hay = docSearchHaystack(doc);
 		let hits = 0;
 		for (const t of tokens) {
-			if (hay.includes(t)) hits += 1;
+			if (tokenMatchesHay(t, hay)) hits += 1;
 			if (hits >= minHits) break;
 		}
 		if (hits >= minHits) out.push(doc);
 	}
 	return out;
+}
+
+function docSearchHaystack(doc: Document): string {
+	const source = typeof doc.metadata?.source === "string" ? doc.metadata.source : "";
+	return `${source}\n${doc.pageContent}`.toLowerCase();
+}
+
+function tokenMatchesHay(token: string, hay: string): boolean {
+	if (hay.includes(token)) return true;
+	if (token.length < 4) return false;
+	for (const word of hay.split(/\s+/)) {
+		const clean = word.replace(/[^\p{L}\p{N}]/gu, "");
+		if (clean.length >= token.length && clean.startsWith(token)) return true;
+	}
+	return false;
 }
 
 function tokenizeForLexicalMatch(s: string): readonly string[] {
@@ -51,6 +66,8 @@ function tokenizeForLexicalMatch(s: string): readonly string[] {
 		"posicao",
 		"é",
 		"e",
+		"como",
+		"que",
 	]);
 	return s
 		.toLowerCase()
@@ -59,5 +76,5 @@ function tokenizeForLexicalMatch(s: string): readonly string[] {
 		.replace(/[^\p{L}\p{N}\s]/gu, " ")
 		.split(/\s+/)
 		.map((t) => t.trim())
-		.filter((t) => t.length >= 4 && !stop.has(t));
+		.filter((t) => t.length >= 3 && !stop.has(t));
 }

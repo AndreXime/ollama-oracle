@@ -6,6 +6,15 @@
 
 ---
 
+## 0) Identidade da empresa
+
+### Qual é o nome da empresa?
+- A **Lumina Tech** é a empresa brasileira de software B2B e infraestrutura em nuvem (perfil institucional interno).
+- Documentos operacionais e materiais legados também usam a marca **NexusCloud Solutions** e o ecossistema **NCS-*** (Lumina Cloud Services).
+- Dúvidas oficiais de marca/comunicação: canal interno de Comunicação (intranet).
+
+---
+
 ## 1) Acesso, contas e permissões
 
 ### Como peço acesso a um sistema (ex.: ambiente de staging/prod)?

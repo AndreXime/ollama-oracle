@@ -17,9 +17,23 @@ export function chatHistoryToMessages(history: readonly ChatTurn[]): BaseMessage
 
 /** Enriquece a query de retrieval com turnos recentes para follow-ups ambíguos. */
 export function buildRetrievalQuery(question: string, history: readonly ChatTurn[]): string {
+	const enriched = enrichInstitutionalRetrievalQuery(question);
 	const recent = history.slice(-4);
-	if (recent.length === 0) return question.trim();
+	if (recent.length === 0) return enriched;
 	const parts = recent.map((t) => t.content.trim()).filter((c) => c.length > 0);
-	parts.push(question.trim());
+	parts.push(enriched);
 	return parts.join("\n");
+}
+
+function enrichInstitutionalRetrievalQuery(question: string): string {
+	const q = question
+		.trim()
+		.toLowerCase()
+		.normalize("NFKD")
+		.replace(/[\u0300-\u036f]/g, "");
+	const asksIdentity =
+		/\b(nome|chama|denominacao)\b/.test(q) &&
+		/\b(empresa|organizacao|companhia|instituicao|corporacao)\b/.test(q);
+	if (!asksIdentity) return question.trim();
+	return `${question.trim()}\nLumina Tech NexusCloud Solutions perfil institucional quem somos`;
 }

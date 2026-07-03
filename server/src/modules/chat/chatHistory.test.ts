@@ -34,4 +34,10 @@ describe("buildRetrievalQuery", () => {
 		expect(q).toContain("Via portal RH.");
 		expect(q).toContain("e o prazo?");
 	});
+
+	test("enriquece pergunta sobre nome da empresa", () => {
+		const q = buildRetrievalQuery("Como é o nome da empresa?", []);
+		expect(q).toContain("Lumina Tech");
+		expect(q).toContain("institucional");
+	});
 });

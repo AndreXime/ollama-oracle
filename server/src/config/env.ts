@@ -77,7 +77,7 @@ const configSchema = z
 		} as const;
 	});
 
-loadEnv({ path: resolve(findServerPackageDir(), ".env") });
+loadEnv({ path: resolve(findServerPackageDir(), ".env"), quiet: true });
 
 export type AppConfig = z.infer<typeof configSchema>;
 
