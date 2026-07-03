@@ -3,7 +3,7 @@ import { z } from "zod";
 import { parseChatPromptMaxChunks, parseCorsOrigins, parseOptionalNonNegativeNumber } from "./parsers.js";
 import { serverPackageDir } from "./paths.js";
 
-export const configSchema = z
+const configSchema = z
 	.looseObject({
 		PORT: z.coerce.number().int().min(1).max(65535),
 		OLLAMA_BASE_URL: z.string().url(),

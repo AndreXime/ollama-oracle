@@ -28,7 +28,7 @@ export function parseNdjsonLine(line: string): NdjsonEvent | null {
 	return parsed;
 }
 
-export interface NdjsonConsumeResult {
+interface NdjsonConsumeResult {
 	readonly remaining: string;
 	readonly events: readonly NdjsonEvent[];
 }

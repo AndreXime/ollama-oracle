@@ -15,9 +15,7 @@ import { extractTextFromMessageContent } from "./rag/llmContent.js";
 import { contentKey, dedupeScoredByContent, minDistanceByContent, type ScoredDoc } from "./rag/scoredDocuments.js";
 import { mapDocumentsToSources, type RagSource } from "./rag/sources.js";
 
-export type { RagSource } from "./rag/sources.js";
-
-export type RagStreamEvent =
+type RagStreamEvent =
 	| { readonly type: "delta"; readonly text: string }
 	| { readonly type: "done"; readonly sources: readonly RagSource[] };
 

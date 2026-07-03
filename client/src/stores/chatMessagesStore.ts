@@ -8,7 +8,7 @@ export interface ChatMessage {
 	readonly sources?: readonly { source: string; excerpt: string }[];
 }
 
-export interface ChatSource {
+interface ChatSource {
 	readonly source: string;
 	readonly excerpt: string;
 }

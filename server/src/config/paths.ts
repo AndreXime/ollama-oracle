@@ -17,7 +17,7 @@ function findMonorepoRoot(startDir: string): string {
 }
 
 const startDir = dirname(fileURLToPath(import.meta.url));
-export const repoRoot = findMonorepoRoot(startDir);
+const repoRoot = findMonorepoRoot(startDir);
 export const serverPackageDir = resolve(repoRoot, "server");
 
 loadEnv({ path: resolve(serverPackageDir, ".env") });

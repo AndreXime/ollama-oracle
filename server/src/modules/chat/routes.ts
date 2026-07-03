@@ -28,7 +28,7 @@ function isAbortError(e: unknown): boolean {
 	return false;
 }
 
-export interface ChatDeps {
+interface ChatDeps {
 	readonly vectorStore: Chroma;
 	readonly chatModel: ChatOllama;
 }

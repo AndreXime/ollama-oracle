@@ -4,12 +4,12 @@ import { chromaClientArgsFromUrl } from "./chromaHealthArgs.js";
 
 const HEALTH_TIMEOUT_MS = 3_000;
 
-export interface DependencyHealth {
+interface DependencyHealth {
 	readonly ok: boolean;
 	readonly error?: string;
 }
 
-export interface HealthReport {
+interface HealthReport {
 	readonly ok: boolean;
 	readonly ollama: DependencyHealth;
 	readonly chroma: DependencyHealth;
@@ -25,7 +25,7 @@ async function fetchWithTimeout(url: string, init?: RequestInit): Promise<Respon
 	}
 }
 
-export async function checkOllama(): Promise<DependencyHealth> {
+async function checkOllama(): Promise<DependencyHealth> {
 	try {
 		const res = await fetchWithTimeout(`${config.ollamaBaseUrl}/api/tags`);
 		if (!res.ok) {
@@ -53,7 +53,7 @@ export async function checkOllama(): Promise<DependencyHealth> {
 	}
 }
 
-export async function checkChroma(): Promise<DependencyHealth> {
+async function checkChroma(): Promise<DependencyHealth> {
 	try {
 		const client = new ChromaClient(chromaClientArgsFromUrl(config.chromaUrl));
 		await client.heartbeat();
