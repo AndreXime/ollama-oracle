@@ -20,6 +20,7 @@ export function ChatWindow() {
 	const [error, setError] = useState<string | null>(null);
 	const bottomRef = useRef<HTMLDivElement>(null);
 	const abortRef = useRef<AbortController | null>(null);
+	const inFlightRef = useRef(false);
 
 	useEffect(() => {
 		return () => {
@@ -33,7 +34,8 @@ export function ChatWindow() {
 
 	const send = useCallback(async () => {
 		const q = input.trim();
-		if (!q || loading) return;
+		if (!q || inFlightRef.current) return;
+		inFlightRef.current = true;
 		setInput("");
 		setError(null);
 
@@ -42,6 +44,7 @@ export function ChatWindow() {
 		abortRef.current = abort;
 
 		const {
+			messages: storeMessages,
 			addMessages,
 			appendAssistantText,
 			setAssistantSources,
@@ -49,7 +52,7 @@ export function ChatWindow() {
 			completeAssistantPendingStart,
 		} = useChatMessagesStore.getState();
 
-		const history = messages
+		const history = storeMessages
 			.filter((m) => m.content.trim().length > 0)
 			.map((m) => ({ role: m.role, content: m.content }));
 
@@ -93,6 +96,7 @@ export function ChatWindow() {
 				reader,
 				(ev) => {
 					if (!isNdjsonEvent(ev)) return;
+					if (ev.type === "ping") return;
 					if (ev.type === "delta") {
 						appendAssistantText(assistantId, ev.text);
 						requestAnimationFrame(scrollToBottom);
@@ -109,6 +113,7 @@ export function ChatWindow() {
 			setError((e as Error).message);
 			removeEmptyAssistantPlaceholder(assistantId);
 		} finally {
+			inFlightRef.current = false;
 			if (abortRef.current === abort) {
 				abortRef.current = null;
 			}
@@ -116,7 +121,7 @@ export function ChatWindow() {
 			setLoading(false);
 			requestAnimationFrame(scrollToBottom);
 		}
-	}, [input, loading, messages, scrollToBottom]);
+	}, [input, scrollToBottom]);
 
 	const hasMessages = messages.length > 0;
 

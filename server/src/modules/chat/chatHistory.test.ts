@@ -21,22 +21,12 @@ describe("normalizeChatHistory", () => {
 });
 
 describe("buildRetrievalQuery", () => {
-	test("sem histórico retorna só a pergunta", () => {
-		expect(buildRetrievalQuery("  reembolso?  ", [])).toBe("reembolso?");
-	});
-
-	test("inclui turnos recentes", () => {
-		const q = buildRetrievalQuery("e o prazo?", [
-			{ role: "user", content: "Como pedir reembolso?" },
-			{ role: "assistant", content: "Via portal RH." },
-		]);
-		expect(q).toContain("Como pedir reembolso?");
-		expect(q).toContain("Via portal RH.");
-		expect(q).toContain("e o prazo?");
+	test("retorna só a pergunta", () => {
+		expect(buildRetrievalQuery("  reembolso?  ")).toBe("reembolso?");
 	});
 
 	test("enriquece pergunta sobre nome da empresa", () => {
-		const q = buildRetrievalQuery("Como é o nome da empresa?", []);
+		const q = buildRetrievalQuery("Como é o nome da empresa?");
 		expect(q).toContain("Lumina Tech");
 		expect(q).toContain("institucional");
 	});

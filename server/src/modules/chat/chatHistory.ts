@@ -15,14 +15,9 @@ export function chatHistoryToMessages(history: readonly ChatTurn[]): BaseMessage
 	return history.map((turn) => (turn.role === "user" ? new HumanMessage(turn.content) : new AIMessage(turn.content)));
 }
 
-/** Enriquece a query de retrieval com turnos recentes para follow-ups ambíguos. */
-export function buildRetrievalQuery(question: string, history: readonly ChatTurn[]): string {
-	const enriched = enrichInstitutionalRetrievalQuery(question);
-	const recent = history.slice(-4);
-	if (recent.length === 0) return enriched;
-	const parts = recent.map((t) => t.content.trim()).filter((c) => c.length > 0);
-	parts.push(enriched);
-	return parts.join("\n");
+/** Enriquece a query de retrieval (sem histórico — modelos pequenos poluem o embed). */
+export function buildRetrievalQuery(question: string): string {
+	return enrichInstitutionalRetrievalQuery(question);
 }
 
 function enrichInstitutionalRetrievalQuery(question: string): string {

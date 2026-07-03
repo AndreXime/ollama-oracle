@@ -28,6 +28,21 @@ export function pickLexicallyMatchingDocs(question: string, docs: readonly Docum
 	return out;
 }
 
+/** No fallback lexical, descarta trechos com overlap bem menor que o melhor (reduz ruído e prompt). */
+export function pruneWeakLexicalMatches<T extends { readonly doc: Document; readonly distance: number }>(
+	question: string,
+	ranked: readonly T[],
+): T[] {
+	if (ranked.length === 0) return [];
+	let bestLex = 0;
+	for (const row of ranked) {
+		bestLex = Math.max(bestLex, lexicalOverlapScore(question, row.doc));
+	}
+	if (bestLex <= 0) return [...ranked];
+	const minLex = Math.max(2, bestLex - 1);
+	return ranked.filter((row) => lexicalOverlapScore(question, row.doc) >= minLex);
+}
+
 function docSearchHaystack(doc: Document): string {
 	const source = typeof doc.metadata?.source === "string" ? doc.metadata.source : "";
 	return `${source}\n${doc.pageContent}`.toLowerCase();

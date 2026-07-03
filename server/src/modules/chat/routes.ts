@@ -78,6 +78,7 @@ export function registerChatRoutes(app: Hono<AppEnv>, deps: ChatDeps): void {
 				const aborted = () => abort.signal.aborted || s.aborted;
 
 				try {
+					await s.write(`${JSON.stringify({ type: "ping" })}\n`);
 					for await (const ev of streamRagChat(
 						deps.vectorStore,
 						deps.chatModel,
@@ -96,7 +97,10 @@ export function registerChatRoutes(app: Hono<AppEnv>, deps: ChatDeps): void {
 					}
 				} catch (e) {
 					if (aborted() && (c.req.raw.signal.aborted || s.aborted)) {
-						log.info("chat: client disconnected — abort stream");
+						log.info(
+							{ answerLen: answer.length, hadTurnStats: turnStats !== undefined },
+							"chat: client disconnected — abort stream",
+						);
 					} else if (isAbortError(e)) {
 						log.warn("chat: stream aborted");
 					} else {

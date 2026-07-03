@@ -1,4 +1,5 @@
 export type NdjsonEvent =
+	| { type: "ping" }
 	| { type: "delta"; text: string }
 	| { type: "done"; sources: { source: string; excerpt: string }[] }
 	| { type: "error"; message: string };
@@ -6,6 +7,9 @@ export type NdjsonEvent =
 export function isNdjsonEvent(v: unknown): v is NdjsonEvent {
 	if (!v || typeof v !== "object" || !("type" in v)) return false;
 	const t = (v as { type: unknown }).type;
+	if (t === "ping") {
+		return true;
+	}
 	if (t === "delta") {
 		return "text" in v && typeof (v as { text?: unknown }).text === "string";
 	}

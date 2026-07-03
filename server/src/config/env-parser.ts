@@ -28,12 +28,12 @@ export function parseOptionalNonNegativeNumber(raw: string | undefined): number 
 	return Number.isFinite(n) && n >= 0 ? n : null;
 }
 
-/** Teto de trechos no prompt do chat (evita saturar modelos locais). Vazio = 6. */
+/** Teto de trechos no prompt do chat (evita saturar modelos locais). Vazio = 3. */
 export function parseChatPromptMaxChunks(raw: string | undefined): number {
 	const v = raw?.trim();
-	if (v === undefined || v === "") return 6;
+	if (v === undefined || v === "") return 3;
 	const n = Number(v);
-	if (!Number.isFinite(n)) return 6;
+	if (!Number.isFinite(n)) return 3;
 	return Math.min(24, Math.max(1, Math.floor(n)));
 }
 

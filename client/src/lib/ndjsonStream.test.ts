@@ -2,7 +2,8 @@ import { describe, expect, test } from "bun:test";
 import { consumeNdjsonBuffer, isNdjsonEvent, parseNdjsonLine } from "./ndjsonStream.js";
 
 describe("isNdjsonEvent", () => {
-	test("valida delta, done e error", () => {
+	test("valida ping, delta, done e error", () => {
+		expect(isNdjsonEvent({ type: "ping" })).toBe(true);
 		expect(isNdjsonEvent({ type: "delta", text: "a" })).toBe(true);
 		expect(isNdjsonEvent({ type: "done", sources: [] })).toBe(true);
 		expect(isNdjsonEvent({ type: "error", message: "x" })).toBe(true);

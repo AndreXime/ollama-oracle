@@ -20,9 +20,9 @@ describe("parseOptionalNonNegativeNumber", () => {
 });
 
 describe("parseChatPromptMaxChunks", () => {
-	test("default 6", () => {
-		expect(parseChatPromptMaxChunks(undefined)).toBe(6);
-		expect(parseChatPromptMaxChunks("")).toBe(6);
+	test("default 3", () => {
+		expect(parseChatPromptMaxChunks(undefined)).toBe(3);
+		expect(parseChatPromptMaxChunks("")).toBe(3);
 	});
 
 	test("clamp entre 1 e 24", () => {

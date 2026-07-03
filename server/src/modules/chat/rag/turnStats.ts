@@ -1,6 +1,6 @@
 import type { RagSource } from "./sources.js";
 
-export type RagTurnMode = "rag" | "conversational" | "lexical_fallback";
+export type RagTurnMode = "rag" | "conversational" | "lexical_fallback" | "limitation";
 
 export interface RagChunkStat {
 	readonly source: string;

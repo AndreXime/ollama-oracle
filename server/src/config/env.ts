@@ -43,9 +43,9 @@ const configSchema = z
 			.string()
 			.optional()
 			.transform((v) => {
-				if (v === undefined || v.trim() === "") return 6;
+				if (v === undefined || v.trim() === "") return 0;
 				const n = Number(v);
-				if (!Number.isFinite(n)) return 6;
+				if (!Number.isFinite(n)) return 0;
 				return Math.min(20, Math.max(0, Math.floor(n)));
 			})
 			.pipe(z.number().int().min(0).max(20)),
