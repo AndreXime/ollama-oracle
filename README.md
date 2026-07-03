@@ -10,7 +10,7 @@ Para detalhes "por baixo dos panos" (ingest, partes vs chunks, RAG/streaming, en
 |--------|-------------|
 | Runtime / pacotes | Bun |
 | API | Express 5, Pino, Zod, LangChain.js, `@langchain/ollama`, `@langchain/community` (Chroma) |
-| IA | Ollama — chat `llama3.2:3b`, embeddings `nomic-embed-text` |
+| IA | Ollama — chat `qwen2.5:3b`, embeddings `bge-m3` |
 | Vetores | ChromaDB |
 | UI | React, Vite, TailwindCSS |
 
@@ -18,11 +18,11 @@ Para detalhes "por baixo dos panos" (ingest, partes vs chunks, RAG/streaming, en
 
 - Bun, Ollama e Docker instalados.
 
-**Ollama** — o `server/.env.example` assume API em `http://127.0.0.1:11434` (padrão do Ollama) e os modelos `llama3.2:3b` (chat) e `nomic-embed-text` (embeddings).
+**Ollama** — o `server/.env.example` assume API em `http://127.0.0.1:11434` (padrão do Ollama) e os modelos `qwen2.5:3b` (chat) e `bge-m3` (embeddings).
 
 ```bash
-ollama pull llama3.2:3b
-ollama pull nomic-embed-text
+ollama pull qwen2.5:3b
+ollama pull bge-m3
 ```
 
 **ChromaDB** — o `.env.example` usa `http://127.0.0.1:8000`.
@@ -48,7 +48,7 @@ cp client/.env.example client/.env
 
 ## Indexação (ingestão)
 
-Os arquivos em `server/data_source/` são lidos, fragmentados e enviados ao Chroma com `nomic-embed-text`.
+Os arquivos em `server/data_source/` são lidos, fragmentados e enviados ao Chroma com `bge-m3`. Ao trocar `OLLAMA_EMBED_MODEL`, reindexe com `bun run ingest`.
 
 ```bash
 bun run ingest
