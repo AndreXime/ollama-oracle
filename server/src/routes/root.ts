@@ -1,16 +1,17 @@
-import type { Express, Request, Response } from "express";
+import type { Hono } from "hono";
 import { runHealthChecks } from "../shared/health.js";
+import type { AppEnv } from "../app.js";
 
-export function registerRootRoutes(app: Express): void {
-	app.get("/", (_req, res) => {
-		res.json({
+export function registerRootRoutes(app: Hono<AppEnv>): void {
+	app.get("/", (c) =>
+		c.json({
 			service: "ollama-oracle-api",
 			endpoints: { chat: "POST /chat", health: "GET /health" },
-		});
-	});
+		}),
+	);
 
-	app.get("/health", async (_req: Request, res: Response) => {
+	app.get("/health", async (c) => {
 		const report = await runHealthChecks();
-		res.status(report.ok ? 200 : 503).json(report);
+		return c.json(report, report.ok ? 200 : 503);
 	});
 }

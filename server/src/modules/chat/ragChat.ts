@@ -1,7 +1,7 @@
 import type { Chroma } from "@langchain/community/vectorstores/chroma";
 import { type BaseMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
 import type { ChatOllama } from "@langchain/ollama";
-import type { Logger } from "pino";
+import type { AppLogger } from "../../plugins/logger.js";
 import { config } from "../../config/index.js";
 import { buildRetrievalQuery, type ChatTurn, chatHistoryToMessages } from "./chatHistory.js";
 import {
@@ -31,7 +31,7 @@ export async function* streamRagChat(
 	question: string,
 	topK: number,
 	history: readonly ChatTurn[] = [],
-	log?: Logger,
+	log?: AppLogger,
 	signal?: AbortSignal,
 ): AsyncGenerator<RagStreamEvent, void, undefined> {
 	const promptChunks = Math.min(topK, config.chatPromptMaxChunks);

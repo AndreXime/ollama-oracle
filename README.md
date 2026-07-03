@@ -1,6 +1,6 @@
 # Ollama Oracle
 
-Chatbot corporativo com **RAG local**: documentos em `server/data_source`, embeddings e busca vetorial no **ChromaDB**, geração com **Ollama**. Monorepo em **Bun** com API (**Express** + TypeScript) e interface (**React** + **Vite** + **Tailwind CSS v4**).
+Chatbot corporativo com **RAG local**: documentos em `server/data_source`, embeddings e busca vetorial no **ChromaDB**, geração com **Ollama**. Monorepo em **Bun** com API (**Hono** + TypeScript) e interface (**React** + **Vite** + **Tailwind CSS v4**).
 
 Para detalhes "por baixo dos panos" (ingest, partes vs chunks, RAG/streaming, env vars), veja [UNDER_THE_HOOD.md](UNDER_THE_HOOD.md).
 
@@ -9,7 +9,7 @@ Para detalhes "por baixo dos panos" (ingest, partes vs chunks, RAG/streaming, en
 | Camada | Tecnologias |
 |--------|-------------|
 | Runtime / pacotes | Bun |
-| API | Express 5, Pino, Zod, LangChain.js, `@langchain/ollama`, `@langchain/community` (Chroma) |
+| API | Hono, Zod, LangChain.js, `@langchain/ollama`, `@langchain/community` (Chroma) |
 | IA | Ollama — chat `qwen2.5:3b`, embeddings `bge-m3` |
 | Vetores | ChromaDB |
 | UI | React, Vite, TailwindCSS |

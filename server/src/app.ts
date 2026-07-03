@@ -1,25 +1,31 @@
-import express from "express";
-import pino from "pino";
-import { pinoHttp } from "pino-http";
+import { Hono } from "hono";
 import { config } from "./config/index.js";
-import { appLoggerOptions } from "./lib/loggerOptions.js";
+import type { AppLogger } from "./plugins/logger.js";
 import { registerChatRoutes } from "./modules/chat/index.js";
 import { registerCors } from "./plugins/cors.js";
+import { registerLogger } from "./plugins/logger.js";
 import { registerRootRoutes } from "./routes/root.js";
 import { getVectorStore } from "./shared/chroma.js";
 import { createChatModel, createEmbeddings } from "./shared/ollama.js";
 
+export type AppVariables = {
+	readonly logger: AppLogger;
+};
+
+export type AppEnv = {
+	Variables: AppVariables;
+};
+
 export async function buildApp() {
-	const app = express();
-	const logger = pino(appLoggerOptions);
-	app.use(pinoHttp({ logger }));
+	const app = new Hono<AppEnv>();
+
+	registerLogger(app);
 	registerCors(app, config);
 
 	const embeddings = createEmbeddings();
 	const vectorStore = await getVectorStore(embeddings);
 	const chatModel = createChatModel();
 
-	app.use(express.json({ limit: "1mb" }));
 	registerRootRoutes(app);
 	registerChatRoutes(app, { vectorStore, chatModel });
 	return app;

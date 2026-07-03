@@ -1,15 +1,16 @@
-import cors from "cors";
-import type { Express } from "express";
+import { cors } from "hono/cors";
+import type { Hono } from "hono";
 import type { AppConfig } from "../config/schema.js";
+import type { AppEnv } from "../app.js";
 
-export function registerCors(app: Express, cfg: AppConfig): void {
+export function registerCors(app: Hono<AppEnv>, cfg: AppConfig): void {
 	app.use(
+		"*",
 		cors({
-			origin: (origin, cb) => {
-				if (origin === undefined || origin === "") return cb(null, true);
-				const allowlist = cfg.corsOrigins;
-				if (allowlist === null) return cb(null, true);
-				return cb(null, allowlist.includes(origin));
+			origin: (origin) => {
+				if (origin === "") return "*";
+				if (cfg.corsOrigins === null) return origin;
+				return cfg.corsOrigins.includes(origin) ? origin : "";
 			},
 		}),
 	);

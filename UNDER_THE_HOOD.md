@@ -4,7 +4,7 @@ Este documento explica **como o projeto funciona internamente** (ingestão, inde
 
 ## Visão geral (arquitetura)
 
-- **`server/`**: API (Express + Pino) + pipeline de ingestão (LangChain) + integrações (Chroma + Ollama).
+- **`server/`**: API (Hono) + pipeline de ingestão (LangChain) + integrações (Chroma + Ollama).
 - **`client/`**: UI que consome o endpoint de chat.
 - **Chroma**: banco vetorial onde os *chunks* (trechos) são armazenados com embeddings.
 - **Ollama**: roda o modelo de chat e o modelo de embeddings localmente.
