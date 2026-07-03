@@ -1,5 +1,5 @@
 import { ChatOllama, OllamaEmbeddings } from "@langchain/ollama";
-import { config } from "../config/index.js";
+import { config } from "../config/env.js";
 
 export function createEmbeddings(): OllamaEmbeddings {
 	return new OllamaEmbeddings({

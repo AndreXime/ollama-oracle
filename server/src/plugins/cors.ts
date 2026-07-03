@@ -1,6 +1,6 @@
 import { cors } from "hono/cors";
 import type { Hono } from "hono";
-import type { AppConfig } from "../config/schema.js";
+import type { AppConfig } from "../config/env.js";
 import type { AppEnv } from "../app.js";
 
 export function registerCors(app: Hono<AppEnv>, cfg: AppConfig): void {

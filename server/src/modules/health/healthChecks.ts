@@ -1,6 +1,5 @@
-import { ChromaClient } from "chromadb";
-import { config } from "../config/index.js";
-import { chromaClientArgsFromUrl } from "./chromaHealthArgs.js";
+import { config } from "../../config/env.js";
+import { createChromaHttpClient } from "../../shared/chroma.js";
 
 const HEALTH_TIMEOUT_MS = 3_000;
 
@@ -55,7 +54,7 @@ async function checkOllama(): Promise<DependencyHealth> {
 
 async function checkChroma(): Promise<DependencyHealth> {
 	try {
-		const client = new ChromaClient(chromaClientArgsFromUrl(config.chromaUrl));
+		const client = createChromaHttpClient();
 		await client.heartbeat();
 		await client.getCollection({ name: config.chromaCollection });
 		return { ok: true };

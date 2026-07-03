@@ -1,7 +1,13 @@
-import { isAbsolute, resolve } from "node:path";
 import { z } from "zod";
-import { parseChatPromptMaxChunks, parseCorsOrigins, parseOptionalNonNegativeNumber } from "./parsers.js";
-import { serverPackageDir } from "./paths.js";
+import {
+	findServerPackageDir,
+	resolveServerPath,
+	parseChatPromptMaxChunks,
+	parseCorsOrigins,
+	parseOptionalNonNegativeNumber,
+} from "./env-parser.js";
+import { config as loadEnv } from "dotenv";
+import { resolve } from "node:path";
 
 const configSchema = z
 	.looseObject({
@@ -24,7 +30,7 @@ const configSchema = z
 		DATA_SOURCE_DIR: z
 			.string()
 			.min(1)
-			.transform((v) => (isAbsolute(v) ? v : resolve(serverPackageDir, v))),
+			.transform((v) => resolveServerPath(v)),
 		MAX_FILE_BYTES: z.coerce.number().int().positive(),
 		EMBED_BATCH_SIZE: z.coerce.number().int().positive(),
 		CHAT_TOP_K: z.coerce.number().int().min(1).max(50),
@@ -70,6 +76,8 @@ const configSchema = z
 			corsOrigins: env.CORS_ORIGINS,
 		} as const;
 	});
+
+loadEnv({ path: resolve(findServerPackageDir(), ".env") });
 
 export type AppConfig = z.infer<typeof configSchema>;
 

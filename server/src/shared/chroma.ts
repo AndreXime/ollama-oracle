@@ -1,10 +1,20 @@
 import { Chroma } from "@langchain/community/vectorstores/chroma";
 import type { OllamaEmbeddings } from "@langchain/ollama";
 import { ChromaClient } from "chromadb";
-import { config } from "../config/index.js";
-import { chromaClientArgsFromUrl } from "./chromaHealthArgs.js";
+import { config } from "../config/env.js";
 
-function createChromaHttpClient(): ChromaClient {
+function chromaClientArgsFromUrl(urlString: string): { ssl: boolean; host: string; port: number } {
+	const url = new URL(urlString);
+	const ssl = url.protocol === "https:";
+	const host = url.hostname;
+	const port = url.port !== "" ? Number(url.port) : ssl ? 443 : 8000;
+	if (!Number.isFinite(port) || port <= 0 || port > 65535) {
+		throw new Error(`Invalid Chroma URL (port): ${urlString}`);
+	}
+	return { ssl, host, port };
+}
+
+export function createChromaHttpClient(): ChromaClient {
 	return new ChromaClient(chromaClientArgsFromUrl(config.chromaUrl));
 }
 

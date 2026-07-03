@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { parseChatPromptMaxChunks, parseCorsOrigins, parseOptionalNonNegativeNumber } from "./parsers.js";
+import { parseChatPromptMaxChunks, parseCorsOrigins, parseOptionalNonNegativeNumber } from "./env-parser.js";
 
 describe("parseOptionalNonNegativeNumber", () => {
 	test("retorna null para vazio", () => {

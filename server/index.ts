@@ -1,5 +1,5 @@
 import { buildApp } from "./src/app.js";
-import { config } from "./src/config/index.js";
+import { config } from "./src/config/env.js";
 
 const app = await buildApp();
 

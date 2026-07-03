@@ -1,3 +1,25 @@
+import { existsSync } from "node:fs";
+import { dirname, isAbsolute, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+export function findServerPackageDir(): string {
+	const startDir = dirname(fileURLToPath(import.meta.url));
+	let d = resolve(startDir);
+	for (let i = 0; i < 15; i++) {
+		if (existsSync(resolve(d, "server/package.json")) && existsSync(resolve(d, "client/package.json"))) {
+			return resolve(d, "server");
+		}
+		const parent = dirname(d);
+		if (parent === d) break;
+		d = parent;
+	}
+	return resolve(process.cwd(), "server");
+}
+
+export function resolveServerPath(path: string): string {
+	return isAbsolute(path) ? path : resolve(findServerPackageDir(), path);
+}
+
 /** Distância máxima no Chroma (menor = mais similar). `null` = não filtra (usa os top-K como antes). */
 export function parseOptionalNonNegativeNumber(raw: string | undefined): number | null {
 	const v = raw?.trim();

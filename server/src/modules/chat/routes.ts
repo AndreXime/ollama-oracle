@@ -3,7 +3,7 @@ import type { ChatOllama } from "@langchain/ollama";
 import type { Hono } from "hono";
 import { stream } from "hono/streaming";
 import { z } from "zod";
-import { config } from "../../config/index.js";
+import { config } from "../../config/env.js";
 import type { AppEnv } from "../../app.js";
 import { normalizeChatHistory } from "./chatHistory.js";
 import { streamRagChat } from "./ragChat.js";
