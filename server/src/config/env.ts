@@ -15,6 +15,14 @@ const configSchema = z
 		OLLAMA_BASE_URL: z.string().url(),
 		OLLAMA_CHAT_MODEL: z.string().min(1),
 		OLLAMA_EMBED_MODEL: z.string().min(1),
+		OLLAMA_KEEP_ALIVE: z
+			.string()
+			.optional()
+			.transform((v) => {
+				const t = v?.trim();
+				return t === undefined || t === "" ? "30m" : t;
+			})
+			.pipe(z.string().min(1)),
 		CHROMA_URL: z.string().url(),
 		CHROMA_COLLECTION: z.string().min(1),
 		CHROMA_MAX_RETRIEVAL_DISTANCE: z
@@ -67,6 +75,7 @@ const configSchema = z
 			ollamaBaseUrl: env.OLLAMA_BASE_URL,
 			ollamaChatModel: env.OLLAMA_CHAT_MODEL,
 			ollamaEmbedModel: env.OLLAMA_EMBED_MODEL,
+			ollamaKeepAlive: env.OLLAMA_KEEP_ALIVE,
 			chromaUrl: env.CHROMA_URL,
 			chromaCollection: env.CHROMA_COLLECTION,
 			chromaMaxRetrievalDistance: env.CHROMA_MAX_RETRIEVAL_DISTANCE,
