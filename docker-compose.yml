@@ -5,6 +5,8 @@ services:
     ports:
       - "8000:8000"
     restart: unless-stopped
+    mem_limit: 512m
+    cpus: "0.5"
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v2/heartbeat')"]
       interval: 10s
@@ -24,6 +26,8 @@ services:
     volumes:
       - ollama_data:/root/.ollama
     restart: unless-stopped
+    mem_limit: 5g
+    cpus: "2.0"
     healthcheck:
       test:
         [
@@ -67,6 +71,20 @@ services:
       CHROMA_URL: http://chroma:8000
     volumes:
       - rag_logs:/app/rag_logs
+    mem_limit: 768m
+    cpus: "1.0"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "bun",
+          "-e",
+          "fetch('http://127.0.0.1:3001/health/ready').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
     depends_on:
       ingest:
         condition: service_completed_successfully

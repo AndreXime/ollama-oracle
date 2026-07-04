@@ -3,6 +3,7 @@ import type { RequestIdVariables } from "hono/request-id";
 import type { AppLogger } from "./plugins/logger.js";
 import { registerChatRoutes } from "./modules/chat/routes.js";
 import { registerLogger } from "./plugins/logger.js";
+import { registerSecurityHeaders } from "./plugins/securityHeaders.js";
 import { registerHeathRoutes } from "./modules/health/route.js";
 import { registerStaticClient } from "./plugins/staticClient.js";
 import { getVectorStore } from "./shared/chroma.js";
@@ -20,6 +21,7 @@ export async function buildApp() {
 	const app = new Hono<AppEnv>();
 
 	registerLogger(app);
+	registerSecurityHeaders(app);
 
 	const embeddings = createEmbeddings();
 	const vectorStore = await getVectorStore(embeddings);

@@ -3,6 +3,13 @@ import { runHealthChecks } from "./healthChecks.js";
 import type { AppEnv } from "../../app.js";
 
 export function registerHeathRoutes(app: Hono<AppEnv>): void {
+	app.get("/health/live", (c) => c.json({ ok: true }));
+
+	app.get("/health/ready", async (c) => {
+		const report = await runHealthChecks();
+		return c.json(report, report.ok ? 200 : 503);
+	});
+
 	app.get("/health", async (c) => {
 		const report = await runHealthChecks();
 		return c.json(report, report.ok ? 200 : 503);

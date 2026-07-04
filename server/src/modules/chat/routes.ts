@@ -1,10 +1,13 @@
 import type { Chroma } from "@langchain/community/vectorstores/chroma";
 import type { ChatOllama } from "@langchain/ollama";
 import type { Hono } from "hono";
+import { rateLimiter } from "hono-rate-limiter";
 import { stream } from "hono/streaming";
 import { z } from "zod";
 import { config } from "../../config/env.js";
 import type { AppEnv } from "../../app.js";
+import { clientIp } from "../../shared/clientIp.js";
+import { GENERIC_CHAT_ERROR, GENERIC_TIMEOUT_ERROR } from "../../shared/errors.js";
 import { normalizeChatHistory } from "./chatHistory.js";
 import { appendRagConversationLog } from "./ragConversationLog.js";
 import type { RagTurnStats } from "./rag/turnStats.js";
@@ -36,6 +39,17 @@ interface ChatDeps {
 }
 
 export function registerChatRoutes(app: Hono<AppEnv>, deps: ChatDeps): void {
+	app.use(
+		"/chat",
+		rateLimiter({
+			windowMs: 3000,
+			limit: 1,
+			standardHeaders: "draft-6",
+			keyGenerator: (c) => clientIp(c),
+			message: { error: "Muitas requisições. Aguarde alguns segundos." },
+		}),
+	);
+
 	app.post("/chat", async (c) => {
 		const contentLength = c.req.header("content-length");
 		if (contentLength !== undefined && Number(contentLength) > MAX_BODY_BYTES) {
@@ -105,11 +119,11 @@ export function registerChatRoutes(app: Hono<AppEnv>, deps: ChatDeps): void {
 						log.warn("chat: stream aborted");
 					} else {
 						log.error(e);
-						streamError = e instanceof Error ? e.message : "Erro ao gerar resposta";
+						streamError = GENERIC_CHAT_ERROR;
 						await s.write(
 							`${JSON.stringify({
 								type: "error",
-								message: streamError,
+								message: GENERIC_CHAT_ERROR,
 							})}\n`,
 						);
 					}
@@ -132,20 +146,10 @@ export function registerChatRoutes(app: Hono<AppEnv>, deps: ChatDeps): void {
 		} catch (e) {
 			if (isAbortError(e)) {
 				log.warn("chat: timeout (Ollama)");
-				return c.json(
-					{
-						error: "Tempo esgotado ao falar com o Ollama. Verifique se o serviço está ativo.",
-					},
-					504,
-				);
+				return c.json({ error: GENERIC_TIMEOUT_ERROR }, 504);
 			}
 			log.error(e);
-			return c.json(
-				{
-					error: e instanceof Error ? e.message : "Erro interno no chat",
-				},
-				500,
-			);
+			return c.json({ error: GENERIC_CHAT_ERROR }, 500);
 		}
 	});
 }
