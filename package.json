@@ -10,11 +10,10 @@
 		"client"
 	],
 	"scripts": {
-		"dev": "concurrently -n client,server -c green,blue \"bun run --filter nexus-rag-oracle-client dev\" \"bun run --filter nexus-rag-oracle-server dev\"",
+		"dev": "concurrently -n client,server -c green,blue \"bun run --filter nexus-rag-oracle-client build:watch\" \"bun run --filter nexus-rag-oracle-server dev\"",
 		"build": "bun run --filter nexus-rag-oracle-client build && bun run --filter nexus-rag-oracle-server build",
 		"ingest": "bun run --filter nexus-rag-oracle-server ingest",
-		"start": "bun run --filter nexus-rag-oracle-client preview",
-		"start:api": "bun run --filter nexus-rag-oracle-server start",
+		"start": "bun dist/server/index.js",
 		"test": "bun run --filter nexus-rag-oracle-server test && bun run --filter nexus-rag-oracle-client test",
 		"format": "biome check --write --no-errors-on-unmatched ."
 	},

@@ -39,11 +39,10 @@ Na raiz do repositório:
 bun install
 ```
 
-Copie os exemplos de ambiente e ajuste conforme necessário:
+Copie o exemplo de ambiente do server e ajuste conforme necessário:
 
 ```bash
 cp server/.env.example server/.env
-cp client/.env.example client/.env
 ```
 
 ## Indexação (ingestão)
@@ -58,7 +57,7 @@ Na primeira execução ou para reindexar do zero, o script recria a coleção co
 
 ## Desenvolvimento
 
-API e client em paralelo. Frontend em `http://127.0.0.1:5173`. API em `http://127.0.0.1:3001`.
+Build do client em watch + API com reload. Tudo servido em `http://127.0.0.1:3001`.
 
 ```bash
 bun run dev
@@ -68,8 +67,7 @@ bun run dev
 
 ```bash
 bun run build
-bun run start:api   # API em server/dist/index.js
-bun run start       # preview do client (Vite)
+bun run start   # API + UI em dist/ (http://127.0.0.1:3001)
 ```
 
 ## Testes

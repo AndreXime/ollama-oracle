@@ -7,8 +7,6 @@ import { MessageBubble } from "./MessageBubble";
 import { NexusLogo } from "./NexusLogo";
 import { SourcesList } from "./SourcesList";
 
-const apiBase = import.meta.env.VITE_API_BASE ?? "http://127.0.0.1:3001";
-
 function isAbortError(e: unknown): boolean {
 	return e instanceof Error && e.name === "AbortError";
 }
@@ -73,7 +71,7 @@ export function ChatWindow() {
 		requestAnimationFrame(scrollToBottom);
 
 		try {
-			const res = await fetch(`${apiBase}/chat`, {
+			const res = await fetch("/chat", {
 				method: "POST",
 				headers: { "Content-Type": "application/json", Accept: "application/x-ndjson" },
 				body: JSON.stringify({ question: q, history }),

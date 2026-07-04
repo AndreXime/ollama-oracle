@@ -5,8 +5,8 @@
 	"type": "module",
 	"scripts": {
 		"dev": "bun --watch index.ts",
-		"build": "tsc -p tsconfig.json",
-		"start": "bun dist/index.js",
+		"build": "bun build index.ts --outfile ../dist/server/index.js --target bun",
+		"start": "bun ../dist/server/index.js",
 		"test": "bun test src",
 		"ingest": "bun src/modules/ingest/ingest.ts"
 	},

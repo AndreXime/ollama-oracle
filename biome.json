@@ -6,7 +6,7 @@
 		"useIgnoreFile": true
 	},
 	"files": {
-		"includes": ["**", "!!**/dist", "!!client/dist"],
+		"includes": ["**", "!!**/dist"],
 		"ignoreUnknown": false
 	},
 	"formatter": {

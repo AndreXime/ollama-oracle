@@ -6,6 +6,7 @@ import { registerChatRoutes } from "./modules/chat/routes.js";
 import { registerCors } from "./plugins/cors.js";
 import { registerLogger } from "./plugins/logger.js";
 import { registerHeathRoutes } from "./modules/health/route.js";
+import { registerStaticClient } from "./plugins/staticClient.js";
 import { getVectorStore } from "./shared/chroma.js";
 import { createChatModel, createEmbeddings } from "./shared/ollama.js";
 
@@ -29,5 +30,6 @@ export async function buildApp() {
 
 	registerHeathRoutes(app);
 	registerChatRoutes(app, { vectorStore, chatModel });
+	registerStaticClient(app);
 	return app;
 }
