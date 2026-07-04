@@ -16,20 +16,17 @@ Para detalhes "por baixo dos panos" (ingest, partes vs chunks, RAG/streaming, en
 
 ## Pré-requisitos
 
-- Bun, Ollama e Docker instalados.
+- Bun e Docker instalados.
 
-**Ollama** — o `server/.env.example` assume API em `http://127.0.0.1:11434` (padrão do Ollama) e os modelos `qwen2.5:3b` (chat) e `bge-m3` (embeddings).
-
-```bash
-ollama pull qwen2.5:3b
-ollama pull bge-m3
-```
-
-**ChromaDB** — o `.env.example` usa `http://127.0.0.1:8000`.
+**Ollama e ChromaDB** rodam via Docker Compose. O `server/.env.example` aponta para `http://127.0.0.1:11434` (Ollama) e `http://127.0.0.1:8000` (Chroma).
 
 ```bash
 docker compose up -d
+bun run ollama:pull qwen2.5:3b
+bun run ollama:pull bge-m3
 ```
+
+Na primeira execução, o pull dos modelos pode demorar alguns minutos. Os pesos ficam no volume `ollama_data` entre reinícios do container.
 
 ## Instalação
 

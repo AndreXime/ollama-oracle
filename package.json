@@ -14,6 +14,7 @@
 		"build": "bun run --filter nexus-rag-oracle-client build && bun run --filter nexus-rag-oracle-server build",
 		"ingest": "bun run --filter nexus-rag-oracle-server ingest",
 		"start": "bun dist/server/index.js",
+		"ollama:pull": "docker compose exec ollama ollama pull",
 		"test": "bun run --filter nexus-rag-oracle-server test && bun run --filter nexus-rag-oracle-client test",
 		"format": "biome check --write --no-errors-on-unmatched ."
 	},
