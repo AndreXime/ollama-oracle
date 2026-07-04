@@ -12,6 +12,7 @@ RUN bun install --frozen-lockfile
 
 COPY client ./client
 COPY server ./server
+COPY data_source ./data_source
 
 RUN bun run build
 

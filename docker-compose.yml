@@ -20,7 +20,7 @@ services:
     ports:
       - "11434:11434"
     env_file:
-      - server/.env
+      - .env
     volumes:
       - ollama_data:/root/.ollama
     restart: unless-stopped
@@ -42,7 +42,7 @@ services:
       context: .
       target: ingest
     env_file:
-      - server/.env
+      - .env
     environment:
       OLLAMA_BASE_URL: http://ollama:11434
       CHROMA_URL: http://chroma:8000
@@ -61,12 +61,12 @@ services:
     ports:
       - "3001:3001"
     env_file:
-      - server/.env
+      - .env
     environment:
       OLLAMA_BASE_URL: http://ollama:11434
       CHROMA_URL: http://chroma:8000
     volumes:
-      - rag_logs:/app/server/rag_logs
+      - rag_logs:/app/rag_logs
     depends_on:
       ingest:
         condition: service_completed_successfully

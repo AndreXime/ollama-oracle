@@ -1,7 +1,7 @@
 import { z } from "zod";
 import {
-	findServerPackageDir,
-	resolveServerPath,
+	findRepoRoot,
+	resolveRepoPath,
 	parseChatPromptMaxChunks,
 	parseCorsOrigins,
 	parseOptionalNonNegativeNumber,
@@ -38,7 +38,7 @@ const configSchema = z
 		DATA_SOURCE_DIR: z
 			.string()
 			.min(1)
-			.transform((v) => resolveServerPath(v)),
+			.transform((v) => resolveRepoPath(v)),
 		MAX_FILE_BYTES: z.coerce.number().int().positive(),
 		EMBED_BATCH_SIZE: z.coerce.number().int().positive(),
 		CHAT_TOP_K: z.coerce.number().int().min(1).max(50),
@@ -67,7 +67,7 @@ const configSchema = z
 			.string()
 			.min(1)
 			.optional()
-			.transform((v) => resolveServerPath(v ?? "./rag_logs")),
+			.transform((v) => resolveRepoPath(v ?? "./rag_logs")),
 	})
 	.transform((env) => {
 		return {
@@ -92,7 +92,7 @@ const configSchema = z
 		} as const;
 	});
 
-loadEnv({ path: resolve(findServerPackageDir(), ".env"), quiet: true });
+loadEnv({ path: resolve(findRepoRoot(), ".env"), quiet: true });
 
 export type AppConfig = z.infer<typeof configSchema>;
 

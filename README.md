@@ -1,6 +1,6 @@
 # Ollama Oracle
 
-Chatbot corporativo com **RAG local**: documentos em `server/data_source`, embeddings e busca vetorial no **ChromaDB**, geração com **Ollama**. Monorepo em **Bun** com API (**Hono** + TypeScript) e interface (**React** + **Vite** + **Tailwind CSS v4**).
+Chatbot corporativo com **RAG local**: documentos em `data_source/`, embeddings e busca vetorial no **ChromaDB**, geração com **Ollama**. Monorepo em **Bun** com API (**Hono** + TypeScript) e interface (**React** + **Vite** + **Tailwind CSS v4**).
 
 Para detalhes "por baixo dos panos" (ingest, partes vs chunks, RAG/streaming, env vars), veja [UNDER_THE_HOOD.md](UNDER_THE_HOOD.md).
 
@@ -18,7 +18,7 @@ Para detalhes "por baixo dos panos" (ingest, partes vs chunks, RAG/streaming, en
 
 - Bun e Docker instalados.
 
-**Ollama e ChromaDB** rodam via Docker Compose. Modelos (`OLLAMA_CHAT_MODEL`, `OLLAMA_EMBED_MODEL`) vêm do `server/.env` e são baixados automaticamente no primeiro `up`.
+**Ollama e ChromaDB** rodam via Docker Compose. Modelos (`OLLAMA_CHAT_MODEL`, `OLLAMA_EMBED_MODEL`) vêm do `.env` na raiz e são baixados automaticamente no primeiro `up`.
 
 ## Instalação
 
@@ -31,12 +31,12 @@ bun install
 Copie o exemplo de ambiente do server e ajuste conforme necessário:
 
 ```bash
-cp server/.env.example server/.env
+cp .env.example .env
 ```
 
 ## Indexação (ingestão)
 
-Os arquivos em `server/data_source/` são lidos, fragmentados e enviados ao Chroma com `bge-m3`. Ao trocar `OLLAMA_EMBED_MODEL`, reindexe com `bun run ingest`.
+Os arquivos em `data_source/` são lidos, fragmentados e enviados ao Chroma com `bge-m3`. Ao trocar `OLLAMA_EMBED_MODEL`, reindexe com `bun run ingest`.
 
 ```bash
 bun run ingest
@@ -59,7 +59,7 @@ bun run dev
 Sobe app, Ollama e Chroma. A UI e a API ficam em `http://127.0.0.1:3001`.
 
 ```bash
-cp server/.env.example server/.env
+cp .env.example .env
 docker compose up -d --build
 ```
 
