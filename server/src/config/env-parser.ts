@@ -40,12 +40,3 @@ export function parseChatPromptMaxChunks(raw: string | undefined): number {
 	if (!Number.isFinite(n)) return 3;
 	return Math.min(24, Math.max(1, Math.floor(n)));
 }
-
-export function parseCorsOrigins(raw: string | undefined): readonly string[] | null {
-	const v = raw?.trim();
-	if (v === undefined || v === "" || v === "*") return null;
-	return v
-		.split(",")
-		.map((s) => s.trim())
-		.filter((s) => s.length > 0);
-}

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { parseChatPromptMaxChunks, parseCorsOrigins, parseOptionalNonNegativeNumber } from "./env-parser.js";
+import { parseChatPromptMaxChunks, parseOptionalNonNegativeNumber } from "./env-parser.js";
 
 describe("parseOptionalNonNegativeNumber", () => {
 	test("retorna null para vazio", () => {
@@ -29,21 +29,5 @@ describe("parseChatPromptMaxChunks", () => {
 		expect(parseChatPromptMaxChunks("0")).toBe(1);
 		expect(parseChatPromptMaxChunks("99")).toBe(24);
 		expect(parseChatPromptMaxChunks("8")).toBe(8);
-	});
-});
-
-describe("parseCorsOrigins", () => {
-	test("asterisco libera tudo", () => {
-		expect(parseCorsOrigins("*")).toBeNull();
-		expect(parseCorsOrigins("  *  ")).toBeNull();
-	});
-
-	test("vazio libera tudo", () => {
-		expect(parseCorsOrigins(undefined)).toBeNull();
-		expect(parseCorsOrigins("")).toBeNull();
-	});
-
-	test("lista CSV de URLs", () => {
-		expect(parseCorsOrigins("http://a.com, http://b.com")).toEqual(["http://a.com", "http://b.com"]);
 	});
 });

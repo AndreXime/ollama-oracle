@@ -3,7 +3,6 @@ import {
 	findRepoRoot,
 	resolveRepoPath,
 	parseChatPromptMaxChunks,
-	parseCorsOrigins,
 	parseOptionalNonNegativeNumber,
 } from "./env-parser.js";
 import { config as loadEnv } from "dotenv";
@@ -58,11 +57,6 @@ const configSchema = z
 			})
 			.pipe(z.number().int().min(0).max(20)),
 		INGEST_ADD_CONCURRENCY: z.coerce.number().int().min(1).max(32),
-		CORS_ORIGINS: z
-			.string()
-			.optional()
-			.transform((v) => parseCorsOrigins(v))
-			.pipe(z.array(z.string().url()).nullable()),
 		RAG_LOG_DIR: z
 			.string()
 			.min(1)
@@ -87,7 +81,6 @@ const configSchema = z
 			chatPromptMaxChunks: env.CHAT_PROMPT_MAX_CHUNKS,
 			chatHistoryMaxMessages: env.CHAT_HISTORY_MAX_MESSAGES,
 			ingestAddConcurrency: env.INGEST_ADD_CONCURRENCY,
-			corsOrigins: env.CORS_ORIGINS,
 			ragLogDir: env.RAG_LOG_DIR,
 		} as const;
 	});
