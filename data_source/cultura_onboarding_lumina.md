@@ -33,11 +33,13 @@
 
 ## 4. Escritórios e hubs
 
-- **São Paulo — matriz administrativa:** reuniões executivas e jurídico.  
-- **Belo Horizonte — hub de engenharia:** maior concentração de squads de **plataforma**.  
-- **Campinas — hub de produto e dados:** próximo a parceiros de hardware e laboratórios de **NCS-DATA-PIPELINE**.  
+- **São Paulo — matriz administrativa (Av. Faria Lima, 2500, 12º andar):** reuniões executivas, jurídico, comercial enterprise e financeiro. Capacidade: **180 postos** + 6 salas de reunião.
+- **Belo Horizonte — hub de engenharia (Savassi, R. dos Inconfidentes, 800):** maior concentração de squads de **plataforma**, SRE e identidade. Capacidade: **220 postos**; datacenter parceiro a **12 km**.
+- **Campinas — hub de produto e dados (Taquaral):** próximo a parceiros de hardware e laboratórios de **NCS-DATA-PIPELINE**. Capacidade: **95 postos**.
 
-Estacionamento e acesso: credenciais via **NCS-AUTH-GATEWAY** integrado ao controle de visitantes.
+Estacionamento e acesso: credenciais via **NCS-AUTH-GATEWAY** integrado ao controle de visitantes. Visitantes: cadastro com **24h** de antecedência no portal **Recepção Lumina**.
+
+**Coworking autorizado (remoto):** colaboradores 100% remoto podem usar rede **WeWork Lumina Partner** em SP, BH e Campinas (até **8 dias/mês**, reserva via RHIS).
 
 ---
 
@@ -52,3 +54,6 @@ Estacionamento e acesso: credenciais via **NCS-AUTH-GATEWAY** integrado ao contr
 
 - Políticas formais de RH, carreira **Y-shape** e segurança: documento **Políticas de RH** (v2026.1).  
 - Arquitetura e serviços: **arquitetura_projetos.json** e ADRs no repositório corporativo de engenharia.
+- Organograma e squads: **organograma_departamentos.md**.
+- Calendário de feriados e eventos: **calendario_corporativo_2026.md**.
+- Comunicados recentes: **comunicado_all_hands_abril_2026.md**.

@@ -85,10 +85,16 @@
 ### Posso colocar tokens/credenciais em repositório?
 - **Não.** Secrets devem ficar em cofre/gestão corporativa e seguir política de rotação.
 - Se vazar, trate como incidente e siga o playbook de resposta.
+- Scanner **Gitleaks** roda em todo PR; violações bloqueiam merge.
 
 ### O que é ZTNA/MFA e por que é obrigatório?
 - Padrão de acesso remoto corporativo (rede e identidade).
 - Reduz risco de comprometimento e mantém trilha de auditoria.
+- Cliente VPN: **LuminaSecure Client 4.2+** (Mac/Windows/Linux).
+
+### Reportar phishing ou e-mail suspeito
+- Encaminhe para `security-reports@lumina.internal` e abra ticket ITSM categoria **Segurança**.
+- Não clique em links; use o botão **Report Phishing** no Outlook corporativo.
 
 ---
 
@@ -101,10 +107,33 @@
 ### Como pedir férias/ausência?
 - Use o **RHIS** (fluxo oficial).
 - Combine com a liderança e garanta cobertura quando houver on-call.
+- **Fracionamento:** até 3 períodos; um deles com mínimo de **14 dias corridos** (CLT).
+- **Saldo:** consulte RHIS → Tempo → Férias; alerta automático quando saldo > 20 dias.
+
+### Quando recebo PLR?
+- Pagamento previsto até **31 de março** do ano seguinte ao exercício (ex.: PLR 2025 paga em mar/2026).
+- Elegibilidade: 12+ meses de vínculo CLT no ano de apuração e metas coletivas atingidas.
+
+### Como funciona avaliação de desempenho?
+- **2 ciclos/ano:** revisão de meio de ano (junho) e fechamento anual (dezembro).
+- Ferramenta: **RHIS → Performance**; calibração entre gestores em julho e janeiro.
 
 ---
 
-## 6) Quem procurar (atalhos)
+## 6) Produtos e clientes
+
+### Quem são nossos principais clientes?
+- Ver perfil institucional: Banco Horizonte Digital, Rede Saúde Integrada, Grupo Varejo Norte, Energia Sul Transmissão, Pagamentos Atlas.
+- Detalhes comerciais: documento **guia_comercial_clientes.md** (acesso Comercial/CS).
+
+### O que é NCS Connect vs NCS Identity?
+- **NCS Connect:** mensageria enterprise (**NCS-MSG-ROUTER**).
+- **NCS Identity:** autenticação e SSO (**NCS-AUTH-GATEWAY**, **NCS-USER-DIRECTORY**).
+- Catálogo completo: **produtos_ncs_catalogo.md**.
+
+---
+
+## 7) Quem procurar (atalhos)
 
 ### Dúvidas sobre arquitetura e serviços NCS-*?
 - Consulte o **mapa de sistemas** (`arquitetura_projetos.json`) e ADRs.
@@ -113,4 +142,11 @@
 ### Dúvidas sobre políticas internas (RH/segurança)?
 - Consulte primeiro o documento de **Políticas de RH** (v2026.1) e o material de segurança.
 - Se precisar, acione Pessoas & Cultura ou Segurança/Conformidade via canais oficiais.
+
+### Dúvidas sobre incidentes e post-mortems?
+- Runbook SRE: **runbook_operacao_sre.md**.
+- Histórico: **post_mortems_incidentes_2026.md** (INC-2026-402, 418, 431).
+
+### Dúvidas sobre ética e conduta?
+- **codigo_conduta_etica.md**; canal confidencial: `etica@lumina.internal`.
 

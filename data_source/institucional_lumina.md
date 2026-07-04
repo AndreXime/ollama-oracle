@@ -88,18 +88,55 @@ Valores em **milhões de reais (R$)**, auditoria em finalização:
 ## 7. Mercado e clientes
 
 - **Segmentos:** fintechs, operadoras de saúde digital, varejo omnichannel e utilities com requisitos de **residência de dados** no Brasil.  
-- **Ticket médio anual (ARPA) enterprise:** faixa **média-alta** (número exato — apenas Comercial/Financeiro).  
-- **Retenção líquida (NRR)** entre contas enterprise: acima de **115%** no último ano fiscal (meta interna mantida).
+- **Ticket médio anual (ARPA) enterprise:** faixa **R$ 480 mil a R$ 2,1 milhões** (número exato por contrato — apenas Comercial/Financeiro).  
+- **Retenção líquida (NRR)** entre contas enterprise: acima de **115%** no último ano fiscal (meta interna mantida).  
+- **Clientes de referência (contratos ativos, março/2026):**  
+  - **Banco Horizonte Digital** (fintech Tier-1, mensageria + billing)  
+  - **Rede Saúde Integrada** (operadora, identidade + audit trail)  
+  - **Grupo Varejo Norte** (omnichannel, edge ingress + data pipeline)  
+  - **Energia Sul Transmissão** (utility regulada, residência de dados SP/MG)  
+  - **Pagamentos Atlas** (adquirente, NCS-MSG-ROUTER + NCS-BILLING-API)  
+- **Pipeline comercial Q2/2026:** **R$ 47 milhões** em oportunidades qualificadas (CRM interno, acesso restrito Comercial).
 
 ---
 
-## 8. Compliance e imagem
+## 8. Linha do tempo (marcos)
+
+| Ano | Marco |
+|-----|-------|
+| **2019** | Fundação em Campinas (SP); primeiros contratos piloto com utilities regionais. |
+| **2020** | Série A; abertura do hub de engenharia em Belo Horizonte (MG). |
+| **2021** | Lançamento do ecossistema **NCS-***; contratação de Ricardo Almeida Veiga (CEO) e Marina Duarte (CTO). |
+| **2022** | Certificação SOC 2 Type II (escopo inicial); **472** colaboradores atingidos em mar/2026 (projeção histórica: 180 em 2022). |
+| **2023** | Expansão multi-região AWS + Azure; primeiro cliente enterprise acima de **R$ 1M ARR**. |
+| **2024** | Série B concluída; matriz administrativa consolidada em São Paulo. |
+| **2025** | Receita **R$ 318M**; início de auditoria ISO 27001 ampliada; incidentes INC-2026-* geram programa de resiliência. |
+| **2026** | Meta +80 contratações; negociação Série C; assistente interna **Lumi** em rollout para RH e engenharia. |
+
+---
+
+## 9. Portfólio de produtos (NCS)
+
+| Produto | Descrição resumida | Serviço principal |
+|---------|-------------------|-------------------|
+| **NCS Connect** | Mensageria enterprise com garantias de entrega e roteamento inteligente | NCS-MSG-ROUTER |
+| **NCS Identity** | SSO, MFA, emissão de JWT e integração OIDC para apps cliente | NCS-AUTH-GATEWAY, NCS-USER-DIRECTORY |
+| **NCS Meter** | Medição de uso, faturamento e exportação de invoices | NCS-BILLING-API |
+| **NCS Shield** | Edge, WAF e políticas de tráfego | NCS-EDGE-INGRESS |
+| **NCS Insights** | ETL analítico e feature store para workloads de dados | NCS-DATA-PIPELINE |
+| **NCS Audit** | Trilhas de auditoria e conformidade regulatória | NCS-AUDIT-SINK |
+
+Detalhes comerciais e pricing: documento **produtos_ncs_catalogo.md** (Comercial e CS).
+
+---
+
+## 10. Compliance e imagem
 
 - Certificações e frameworks em progresso: **ISO 27001** (escopo ampliado), alinhamento a **LGPD** e revisões trimestrais de **política de RH e segurança da informação** (ver documento de políticas de RH v2026.1).
 
 ---
 
-## 9. Contatos oficiais (referência)
+## 11. Contatos oficiais (referência)
 
 - **Imprensa e marca:** `comunicacao@lumina.internal` (intranet) — não usar e-mail externo fictício em materiais públicos sem revisão jurídica.  
 - **Investidores:** apenas **DAF** e **CEO office**.  

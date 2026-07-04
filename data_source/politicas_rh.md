@@ -26,6 +26,12 @@
 
 2.2. Mudanças de trilha (ex.: de IC para EM) seguem calendário de **mobilidade interna** publicado no portal RH, com *slot* de mentoria de 90 dias e *checkpoint* de feedback 360°.
 
+2.3. **Avaliação de desempenho:** dois ciclos anuais (junho e dezembro) com calibração entre pares de gestores. Notas em escala **1–5**; promoções exigem, em geral, **dois ciclos consecutivos ≥ 4** na faixa atual ou evidência excepcional documentada.
+
+2.4. **Licença parental:** complemento empresa além do legal — **120 dias** maternidade, **20 dias** paternidade/co-pai; solicitar no RHIS com **30 dias** de antecedência quando possível.
+
+2.5. **PLR:** elegível para CLT com 12+ meses no ano de apuração; peso **70% meta coletiva / 30% meta individual**; pagamento até **31/mar** do ano seguinte.
+
 ---
 
 ## 3. Reembolso de certificações **AWS** e **Azure**

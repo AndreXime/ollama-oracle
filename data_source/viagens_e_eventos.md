@@ -75,5 +75,16 @@ Em geral, quando:
 - Possível em alguns casos, desde que os custos pessoais sejam segregados e aprovado previamente.
 
 ### Qual classe de passagem/hotel é permitida?
-- Depende da política vigente; consulte o portal de viagens/financeiro.
+- **Voos nacionais:** classe econômica padrão; upgrade permitido com justificativa (voo > 4h ou reunião executiva).
+- **Voos internacionais:** econômica premium ou executiva apenas para Executive e aprovação CEO office.
+- **Hotel:** até **3 estrelas** ou equivalente; teto **R$ 450/noite** (capitais) e **R$ 320/noite** (demais cidades). Exceções: eventos com tarifa negociada pela Lumina.
+
+### Diárias e alimentação em viagem
+- **Diária nacional:** **R$ 120/dia** para refeições não incluídas no hotel ou evento.
+- **Diária internacional:** **USD 75/dia** (conversão na data da viagem).
+- **Almoço/jantar com cliente:** pode exceder teto com aprovação prévia; registrar participantes e objetivo no portal.
+
+### Conferências aprovadas recorrentemente (2026)
+- **AWS re:Invent**, **KubeCon**, **GopherCon LATAM**, **React Summit**, **QCon São Paulo**.
+- Inscrição: solicitar com **60 dias** de antecedência; limite de **2 colaboradores/squad** por evento (salvo exceção EM).
 

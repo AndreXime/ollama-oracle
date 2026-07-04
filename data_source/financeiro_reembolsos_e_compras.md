@@ -11,6 +11,16 @@
 ### O que normalmente é reembolsável?
 - Despesas de trabalho previamente aprovadas (ex.: transporte a trabalho, refeições em viagem, materiais essenciais).
 - Eventos/cursos quando aprovados pela liderança (ver política de eventos).
+- **Certificações AWS/Azure** via fluxo **RH-TEC-14** no **NCS-EXPENSE-PORTAL** (não usar fluxo genérico de reembolso).
+
+### Limites e tetos (abril/2026)
+| Categoria | Teto | Observação |
+|-----------|------|------------|
+| Refeição em viagem | **R$ 120/refeição** | Com nota fiscal; máx. 3 refeições/dia |
+| Taxi/Uber corporativo | **R$ 250/dia** | Viagens aprovadas; preferir app **LuminaRide** |
+| Material de escritório | **R$ 300/mês** | Pré-aprovação do gestor acima de **R$ 150** |
+| Livros técnicos | **R$ 400/trimestre** | Relacionados à função |
+| Certificação cloud | **100% taxa de exame** | 1x a cada 24 meses por certificação (ver Políticas RH) |
 
 ### Como pedir reembolso
 - Abra solicitação no portal financeiro/RHIS (fluxo de **Reembolso**).
@@ -84,7 +94,15 @@ Motivos comuns:
 ## 6) Perguntas rápidas
 
 ### Qual o prazo de pagamento de reembolso?
-- Depende do ciclo do financeiro; consulte o portal e o status do seu pedido.
+- **Ciclo quinzenal:** solicitações aprovadas até dia **10** e **25** de cada mês são pagas na folha do mês seguinte (ou crédito em conta em até **15 dias úteis** para PJ).
+- Status: acompanhe no **NCS-EXPENSE-PORTAL** ou RHIS → Financeiro → Meus reembolsos.
+
+### Quem aprova reembolsos?
+| Valor | Aprovador |
+|-------|-----------|
+| Até **R$ 500** | Gestor direto |
+| **R$ 501 – R$ 3.000** | Gestor + Financeiro (Controladoria) |
+| Acima de **R$ 3.000** | Gestor + DAF ou VP da área |
 
 ### Posso pedir reembolso de home office?
 - Se elegível e previsto em política (ver RH prático / política de home office).

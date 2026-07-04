@@ -30,24 +30,39 @@
 
 ---
 
-## 3) Benefícios (resumo)
+## 3) Benefícios (resumo detalhado — vigência abril/2026)
 
 ### Saúde e bem-estar
-- Plano de saúde (opções variam por região).
-- Programa de ergonomia (para elegíveis a home office estruturado).
+- **Plano de saúde:** operadora parceira **SaúdeCorp Nacional** (rede ampliada) ou **Regional Plus** (SP/MG). Coparticipação de **20%** em consultas e **30%** em exames de alta complexidade.
+- **Plano odontológico:** incluso para CLT; extensão opcional para dependentes (desconto em folha).
+- **Seguro de vida:** **2x salário base** (CLT); acidentes pessoais inclusos.
+- **Programa de ergonomia:** avaliação anual obrigatória para home office; reembolso de até **R$ 800** a cada 24 meses para cadeira/monitor (com nota fiscal, fluxo RH-ERG-03).
 
 ### Alimentação
-- Vale refeição/alimentação conforme política vigente.
+- **Vale refeição:** **R$ 38,00/dia útil** (cartão **AlimentaCorp**).
+- **Vale alimentação:** **R$ 620,00/mês** (mesmo cartão, saldo separado).
 
 ### Home office
-- Auxílio home office para perfis elegíveis (detalhes no RHIS).
+- **Auxílio home office:** **R$ 150,00/mês** para colaboradores elegíveis (matriz de criticidade Tier-2/Tier-3 ou funções administrativas aprovadas).
+- **Internet:** reembolso de até **R$ 120,00/mês** mediante comprovante (CLT remoto/híbrido elegível).
 
 ### Educação
-- Programa de idiomas.
-- Orçamento anual para cursos/conferências (regras por senioridade).
+- **Programa de idiomas:** parceria **LinguasPro** — 2h/semana, inglês ou espanhol, após 6 meses de casa.
+- **Conferências e cursos:** orçamento anual por nível:
+  - Engineer II / Analista: **R$ 2.500**
+  - Senior / Tech Lead: **R$ 5.000**
+  - Staff+ / Manager: **R$ 8.000**
+  - Executive: conforme aprovação direta do VP.
 
 ### Equity (quando aplicável)
-- Elegibilidade por faixa/cargo; detalhes no portal de Total Rewards.
+- Elegibilidade a partir de **Senior Engineer** e equivalentes (CS Senior, Security Senior).
+- **Vesting:** 4 anos, cliff de 12 meses; detalhes no portal **Total Rewards** (acesso restrito).
+
+### Outros benefícios
+- **PLR (Participação nos Lucros):** elegível para CLT com 12+ meses no ano de apuração; critérios de meta coletiva e individual publicados em outubro.
+- **Licença parental estendida:** 120 dias para mãe (CLT + complemento empresa); 20 dias para pai/co-pai (complemento além do legal).
+- **Day off aniversário:** 1 dia útil no mês do aniversário (solicitar no RHIS com 7 dias de antecedência).
+- **Auxílio creche/babá:** até **R$ 650/mês** para filhos até 5 anos (CLT, comprovação semestral).
 
 ---
 

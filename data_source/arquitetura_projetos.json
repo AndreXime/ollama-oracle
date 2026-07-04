@@ -111,6 +111,34 @@
 			"criticidade": "Tier-2",
 			"sla_disponibilidade_pct": 99.0,
 			"observacoes": "INC-2026-431: *deadlock* em job de agregação impactou faturamento downstream até NCS-BILLING-API."
+		},
+		{
+			"id": "NCS-STATUS-PAGE",
+			"nome": "Public Status & Incident Comms",
+			"stack": ["Node.js", "Redis cache", "CDN edge"],
+			"protocolos": ["HTTPS"],
+			"endpoints_internos": [
+				"POST https://status-cp.internal.lumina/v1/incidents",
+				"GET https://status.lumina.cloud/api/v1/components"
+			],
+			"responsavel_tecnico": "Juliana Costa (Senior SRE — Customer Reliability)",
+			"criticidade": "Tier-1",
+			"sla_disponibilidade_pct": 99.9,
+			"observacoes": "Integrado ao fluxo SEV-1/SEV-2; atualizações a cada 30 min em incidentes críticos."
+		},
+		{
+			"id": "NCS-CONSOLE",
+			"nome": "Customer & Admin Console (SPA)",
+			"stack": ["React 19", "TypeScript", "Vite", "BFF Node.js"],
+			"protocolos": ["HTTPS", "gRPC (BFF para backend)"],
+			"endpoints_internos": [
+				"https://console.internal.lumina/admin",
+				"BFF: https://console-api.internal.lumina/graphql"
+			],
+			"responsavel_tecnico": "Mateus Oliveira (PM); execução: squad Console (Fernanda Lima UX)",
+			"criticidade": "Tier-2",
+			"sla_disponibilidade_pct": 99.5,
+			"observacoes": "Portal self-service para clientes enterprise; consome NCS-BILLING-API e NCS-AUTH-GATEWAY."
 		}
 	],
 	"documents": [
@@ -121,6 +149,8 @@
 		"NCS-EXPENSE-PORTAL — Node.js, React, Postgres, integração RHIS. API POST https://expense.internal.lumina/api/v2/claims/submit e GET .../status para fluxo RH-TEC-14 (reembolso certificações AWS/Azure). Camila Rocha, Tech Lead Internal Tools. Tier-2. Webhooks assinados HMAC; sem armazenamento de credenciais de nuvem; alinhado às políticas de segurança da informação Lumina Tech 2026.",
 		"NCS-AUDIT-SINK — Go, barramento tipo Kafka, armazenamento WORM S3-compatible. POST https://audit.internal.lumina/v1/events/ingest; consumer-group ncs-audit-primary. Idempotência estrita por tupla (tenant_id, event_id). Otávio Mendes, Staff Segurança. Tier-1. Trilhas obrigatórias para eventos de NCS-BILLING-API e acessos privilegiados ao NCS-AUTH-GATEWAY.",
 		"NCS-EDGE-INGRESS — Kubernetes, Envoy, cert-manager, OPA. Plano de controle https://edge-cp.internal.lumina/v1/policies/publish. Ricardo Vale, SRE Plataforma. Tier-0. INC-2026-418: *retry storm* de clientes móveis após rotação de certificado; mitigação incluiu jitter em cliente e limitação de *concurrency* no *retry* HTTP/2.",
-		"NCS-DATA-PIPELINE — Python 3.12, Spark, Postgres/columnar. Jobs via POST https://pipeline.internal.lumina/jobs/trigger; réplica JDBC ro-analytics.internal. Squad Data Platform. Tier-2. INC-2026-431: *deadlock* Postgres em job de agregação mensal; *mitigation*: *lock_timeout* e reordenação de *join*; comunicação com Billing para janela de reconciliação."
+		"NCS-DATA-PIPELINE — Python 3.12, Spark, Postgres/columnar. Jobs via POST https://pipeline.internal.lumina/jobs/trigger; réplica JDBC ro-analytics.internal. Squad Data Platform. Tier-2. INC-2026-431: *deadlock* Postgres em job de agregação mensal; *mitigation*: *lock_timeout* e reordenação de *join*; comunicação com Billing para janela de reconciliação.",
+		"NCS-STATUS-PAGE — Node.js, Redis, CDN. POST status-cp.internal.lumina/v1/incidents; GET status.lumina.cloud/api/v1/components. Juliana Costa, Senior SRE Customer Reliability. Tier-1, SLA 99,9%. Comunicação SEV-1/SEV-2 a cada 30 min; integrado ao runbook SRE e guia comercial.",
+		"NCS-CONSOLE — React 19, TypeScript, Vite, BFF Node.js. Admin console em console.internal.lumina; GraphQL BFF console-api.internal.lumina. Mateus Oliveira PM, squad Console. Tier-2. Self-service enterprise; consome NCS-BILLING-API e NCS-AUTH-GATEWAY."
 	]
 }

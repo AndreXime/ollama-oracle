@@ -118,9 +118,28 @@
 
 ---
 
-## 8) Boas práticas (para evitar incidentes)
+## 8) SLAs de atendimento TI (abril/2026)
 
-- Não compartilhe secrets (tokens/keys) por chat.
-- Não cole dados sensíveis em tickets sem mascaramento.
-- Sempre prefira links internos e referências estáveis (ITSM/RHIS) para políticas.
+| Prioridade | Exemplos | SLA primeira resposta | SLA resolução alvo |
+|------------|----------|----------------------|-------------------|
+| **P1 — Crítico** | Sem SSO, VPN down, produção bloqueada | **30 min** | **4h** |
+| **P2 — Alto** | Notebook quebrado, acesso urgente Tier-1 | **2h** | **1 dia útil** |
+| **P3 — Médio** | Software, licença, acesso staging | **4h** | **3 dias úteis** |
+| **P4 — Baixo** | Dúvidas, melhorias | **1 dia útil** | **5 dias úteis** |
+
+Plantão TI identidade: `#ti-plantao` no Slack (horário comercial estendido 8h–20h BRT).
+
+---
+
+## 9) Sistemas internos (referência rápida)
+
+| Sistema | URL interna | Uso |
+|---------|-------------|-----|
+| **RHIS** | `https://rhis.lumina.internal` | Férias, holerite, performance, benefícios |
+| **ITSM** | `https://itsm.lumina.internal` | Chamados, incidentes, acessos |
+| **NCS-EXPENSE-PORTAL** | `https://expense.internal.lumina` | Reembolsos, certificações |
+| **Confluence** | `https://wiki.lumina.internal` | Documentação, ADRs |
+| **GitHub Enterprise** | `https://github.lumina.internal` | Código (org `lumina`) |
+| **Grafana** | `https://grafana.lumina.internal` | Métricas e dashboards |
+| **Status Page** | `https://status.lumina.cloud` | Comunicação externa de incidentes |
 
