@@ -13,8 +13,8 @@
 		"dev": "concurrently -n client,server -c green,blue \"bun run --filter nexus-rag-oracle-client build:watch\" \"bun run --filter nexus-rag-oracle-server dev\"",
 		"build": "bun run --filter nexus-rag-oracle-client build && bun run --filter nexus-rag-oracle-server build",
 		"ingest": "bun run --filter nexus-rag-oracle-server ingest",
+		"docker:ingest": "docker compose up ingest --force-recreate --no-deps",
 		"start": "bun dist/server/index.js",
-		"ollama:pull": "docker compose exec ollama ollama pull",
 		"test": "bun run --filter nexus-rag-oracle-server test && bun run --filter nexus-rag-oracle-client test",
 		"format": "biome check --write --no-errors-on-unmatched ."
 	},

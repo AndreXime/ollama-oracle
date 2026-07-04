@@ -18,15 +18,7 @@ Para detalhes "por baixo dos panos" (ingest, partes vs chunks, RAG/streaming, en
 
 - Bun e Docker instalados.
 
-**Ollama e ChromaDB** rodam via Docker Compose. O `server/.env.example` aponta para `http://127.0.0.1:11434` (Ollama) e `http://127.0.0.1:8000` (Chroma).
-
-```bash
-docker compose up -d
-bun run ollama:pull qwen2.5:3b
-bun run ollama:pull bge-m3
-```
-
-Na primeira execução, o pull dos modelos pode demorar alguns minutos. Os pesos ficam no volume `ollama_data` entre reinícios do container.
+**Ollama e ChromaDB** rodam via Docker Compose. Modelos (`OLLAMA_CHAT_MODEL`, `OLLAMA_EMBED_MODEL`) vêm do `server/.env` e são baixados automaticamente no primeiro `up`.
 
 ## Instalação
 
@@ -62,6 +54,19 @@ bun run dev
 
 ## Produção
 
+### Docker (recomendado)
+
+Sobe app, Ollama e Chroma. A UI e a API ficam em `http://127.0.0.1:3001`.
+
+```bash
+cp server/.env.example server/.env
+docker compose up -d --build
+```
+
+Na primeira execução o Ollama baixa os modelos do `.env` (pode demorar). Depois: ingest indexa `data_source` → app sobe em `http://127.0.0.1:3001`. Reindexar: `docker compose up ingest --force-recreate --no-deps`.
+
+### Local
+
 ```bash
 bun run build
 bun run start   # API + UI em dist/ (http://127.0.0.1:3001)
@@ -72,7 +77,3 @@ bun run start   # API + UI em dist/ (http://127.0.0.1:3001)
 ```bash
 bun run test
 ```
-
-## Health check
-
-`GET /health` verifica conectividade com Ollama (modelos de chat e embed) e Chroma (coleção configurada). Retorna `200` quando tudo está ok, `503` caso contrário.
