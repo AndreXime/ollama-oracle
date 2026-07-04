@@ -1,4 +1,4 @@
-# NexusCloud Solutions — Onboarding Técnico (Engenharia de Software)
+# Lumina Tech — Onboarding Técnico (Engenharia de Software)
 
 **Público:** novos desenvolvedores (CLT/PJ) alocados a squads de produto ou plataforma  
 **Versão:** 2026.05 | **Owner documental:** Office of the CTO + Platform SRE
@@ -7,7 +7,7 @@
 
 ## 1. Acesso e ambientes
 
-1.1. Solicite via ITSM o perfil **`ncs-dev-base`**, que concede leitura aos repositórios `github.com/nexuscloud/*`, acesso VPN ZTNA e MFA alinhados ao **NCS-AUTH-GATEWAY** (tokens JWT com TTL curto — nunca commite *refresh* ou *kubeconfig* com credenciais de longa duração).
+1.1. Solicite via ITSM o perfil **`ncs-dev-base`**, que concede leitura aos repositórios `github.com/lumina/*`, acesso VPN ZTNA e MFA alinhados ao **NCS-AUTH-GATEWAY** (tokens JWT com TTL curto — nunca commite *refresh* ou *kubeconfig* com credenciais de longa duração).
 
 1.2. Namespaces **Kubernetes** padrão: `ncs-staging` (desenvolvimento integrado), `ncs-prod` (somente CD aprovado). Políticas de rede e *secrets* injetados via *External Secrets*; segredos de CI usam **OIDC** para **AWS**/**Azure**, não PATs de usuário.
 
@@ -51,7 +51,7 @@ Exemplos válidos alinhados aos nossos sistemas:
 4.1. **Gatilhos:** *pull request* para `main` e *push* em `release/*`. *Required checks*: `lint`, `test`, `contract-grpc`, `sast-gitleaks`.
 
 4.2. **Estágios principais:**  
-- **Build matricial:** Node e Go com cache de dependências; artefatos OCI publicados no registry interno `registry.internal.nexuscloud/ncs/<serviço>:<git-sha>`.  
+- **Build matricial:** Node e Go com cache de dependências; artefatos OCI publicados no registry interno `registry.internal.lumina/ncs/<serviço>:<git-sha>`.  
 - **Deploy staging:** automático em merge se *label* `deploy:staging` presente; *rollout* Kubernetes com estratégia *RollingUpdate*, *readiness* contra `/healthz` (ex.: **NCS-AUTH-GATEWAY**, **NCS-BILLING-API**).  
 - **Deploy produção:** manual (`workflow_dispatch`) com aprovação de dois revisores (EM + *on-call* Tier-0 para serviços **Tier-0** como **NCS-MSG-ROUTER** e **NCS-EDGE-INGRESS**).
 

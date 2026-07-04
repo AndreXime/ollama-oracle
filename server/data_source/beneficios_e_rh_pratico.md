@@ -1,6 +1,6 @@
-# NexusCloud Solutions — RH prático & benefícios (v2026.04)
+# Lumina Tech — RH prático & benefícios (v2026.04)
 
-**Classificação interna:** Colaboradores — NexusCloud  
+**Classificação interna:** Colaboradores — Lumina Tech  
 **Escopo:** rotinas de RH, ausências, remoto/híbrido, carreira e benefícios (visão prática).  
 **Fonte de verdade:** RHIS e políticas formais (documento de Políticas de RH v2026.1).
 
@@ -22,7 +22,7 @@
 
 ## 2) Remoto e híbrido (como funciona na prática)
 
-- A NexusCloud adota **remoto/híbrido** conforme elegibilidade.
+- A Lumina Tech adota **remoto/híbrido** conforme elegibilidade.
 - Para times que sustentam serviços **Tier-0/Tier-1**, pode haver:
   - janela mínima de sobreposição com `America/Sao_Paulo`,
   - participação em rituais críticos (ex.: incidentes),

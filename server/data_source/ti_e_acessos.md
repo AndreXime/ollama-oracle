@@ -1,6 +1,6 @@
-# NexusCloud Solutions — TI & Acessos (guia prático) (v2026.04)
+# Lumina Tech — TI & Acessos (guia prático) (v2026.04)
 
-**Classificação interna:** Colaboradores — NexusCloud  
+**Classificação interna:** Colaboradores — Lumina Tech  
 **Escopo:** contas, SSO, dispositivos, softwares, VPN/ZTNA/MFA, acesso a sistemas e suporte.  
 
 ---
@@ -22,8 +22,8 @@
 - Abra ITSM com assunto **“MFA/TOTP — troca de dispositivo”**.
 - Informe: e-mail corporativo, data/hora aproximada da perda e um canal alternativo para confirmação (conforme política de segurança).
 
-### O que é o `nexuscloud.internal`?
-- Domínio interno (intranet/serviços corporativos). Recursos críticos exigem autenticação via **NCS-AUTH-GATEWAY**.
+### O que é o `lumina.internal`?
+- Domínio interno (intranet/serviços corporativos da **Lumina Tech**). Recursos críticos exigem autenticação via **NCS-AUTH-GATEWAY**.
 
 ---
 

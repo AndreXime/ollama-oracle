@@ -1,6 +1,6 @@
-# NexusCloud Solutions — FAQ interno (v2026.04)
+# Lumina Tech — FAQ interno (v2026.04)
 
-**Classificação interna:** Colaboradores — NexusCloud  
+**Classificação interna:** Colaboradores — Lumina Tech  
 **Objetivo:** responder dúvidas frequentes com informações curtas e acionáveis.  
 **Observação:** quando um item citar portal/sistema interno, prefira sempre o link/caminho oficial divulgado no RHIS/ITSM.
 
@@ -10,7 +10,7 @@
 
 ### Qual é o nome da empresa?
 - A **Lumina Tech** é a empresa brasileira de software B2B e infraestrutura em nuvem (perfil institucional interno).
-- Documentos operacionais e materiais legados também usam a marca **NexusCloud Solutions** e o ecossistema **NCS-*** (Lumina Cloud Services).
+- O ecossistema de produtos interno usa o prefixo **NCS-*** (Lumina Cloud Services).
 - Dúvidas oficiais de marca/comunicação: canal interno de Comunicação (intranet).
 
 ---

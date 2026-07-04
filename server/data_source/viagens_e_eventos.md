@@ -1,6 +1,6 @@
-# NexusCloud Solutions — Viagens & Eventos (v2026.04)
+# Lumina Tech — Viagens & Eventos (v2026.04)
 
-**Classificação interna:** Colaboradores — NexusCloud  
+**Classificação interna:** Colaboradores — Lumina Tech  
 **Escopo:** viagens a trabalho, eventos, conferências, prestação de contas e conduta.  
 **Fonte de verdade:** política de viagens no portal corporativo e fluxos de aprovação.
 
@@ -63,7 +63,7 @@ Em geral, quando:
 
 ## 6) Conduta e segurança
 
-- Em viagens com cliente: comportamento profissional e alinhado ao tom de voz da NexusCloud.
+- Em viagens com cliente: comportamento profissional e alinhado ao tom de voz da Lumina Tech.
 - Não compartilhe informações sensíveis fora de ambientes seguros.
 - Se perder cartão/documentos ou sofrer incidente: acione imediatamente os canais oficiais e registre no ITSM quando aplicável.
 

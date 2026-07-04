@@ -10,7 +10,7 @@
 
 1.1. A Lumina Tech adota **home office estruturado** para funções elegíveis conforme matriz de criticidade do sistema ao qual o colaborador está alocado (referência cruzada: mapa de sistemas corporativo — serviços **NCS-***). Equipes que sustentam componentes classificados como **Tier-0** ou **Tier-1** devem manter **janela de sobreposição mínima de quatro horas** com o fuso `America/Sao_Paulo`, salvo exceção aprovada pelo gerente de engenharia e registrada no ITSM interno.
 
-1.2. O acesso a ambientes de produção a partir de rede doméstica exige **VPN corporativa ZTNA** com certificado de máquina + **MFA TOTP** (política alinhada ao *baseline* do **NCS-AUTH-GATEWAY**, que emite **JWT** com **TTL** de 15 minutos para sessões interativas e *refresh* controlado via cookie *httpOnly* em domínios `*.nexuscloud.internal`). É vedado armazenar *secrets* de cluster **Kubernetes** (`kubeconfig` com credenciais de longa duração) em repositórios pessoais.
+1.2. O acesso a ambientes de produção a partir de rede doméstica exige **VPN corporativa ZTNA** com certificado de máquina + **MFA TOTP** (política alinhada ao *baseline* do **NCS-AUTH-GATEWAY**, que emite **JWT** com **TTL** de 15 minutos para sessões interativas e *refresh* controlado via cookie *httpOnly* em domínios `*.lumina.internal`). É vedado armazenar *secrets* de cluster **Kubernetes** (`kubeconfig` com credenciais de longa duração) em repositórios pessoais.
 
 1.3. Colaboradores em home office devem aderir ao **Programa de Postura Ergonômica Lumina** (avaliação anual) e cumprir os requisitos de **registro de ponto eletrônico** integrado ao RHIS. Ausências não justificadas em *stand-ups* críticos de incidente (severidade SEV-1/SEV-2) podem acarretar revisão de elegibilidade ao remoto pleno.
 
@@ -52,4 +52,4 @@
 
 ---
 
-**Contato dúvidas:** `rh-politicas@nexuscloud.internal` (canal autenticado via SSO corporativo).
+**Contato dúvidas:** `rh-politicas@lumina.internal` (canal autenticado via SSO corporativo).

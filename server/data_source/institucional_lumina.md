@@ -101,7 +101,7 @@ Valores em **milhões de reais (R$)**, auditoria em finalização:
 
 ## 9. Contatos oficiais (referência)
 
-- **Imprensa e marca:** `comunicacao@nexuscloud.internal` (intranet) — não usar e-mail externo fictício em materiais públicos sem revisão jurídica.  
+- **Imprensa e marca:** `comunicacao@lumina.internal` (intranet) — não usar e-mail externo fictício em materiais públicos sem revisão jurídica.  
 - **Investidores:** apenas **DAF** e **CEO office**.  
 
 *Este arquivo destina-se à assistente interna **Lumi** e à base indexada; dados sensíveis de terceiros ou de rodadas abertas não devem ser inventados fora deste escopo.*

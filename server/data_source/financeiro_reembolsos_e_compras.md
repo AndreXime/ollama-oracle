@@ -1,6 +1,6 @@
-# NexusCloud Solutions — Financeiro, reembolsos e compras (v2026.04)
+# Lumina Tech — Financeiro, reembolsos e compras (v2026.04)
 
-**Classificação interna:** Colaboradores — NexusCloud  
+**Classificação interna:** Colaboradores — Lumina Tech  
 **Escopo:** reembolsos, cartão corporativo, compras (hardware/serviços), faturamento e centros de custo.  
 **Fonte de verdade:** políticas e fluxos no portal financeiro/RHIS e aprovações registradas.
 

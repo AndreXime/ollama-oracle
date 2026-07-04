@@ -30,5 +30,5 @@ function enrichInstitutionalRetrievalQuery(question: string): string {
 		/\b(nome|chama|denominacao)\b/.test(q) &&
 		/\b(empresa|organizacao|companhia|instituicao|corporacao)\b/.test(q);
 	if (!asksIdentity) return question.trim();
-	return `${question.trim()}\nLumina Tech NexusCloud Solutions perfil institucional quem somos`;
+	return `${question.trim()}\nLumina Tech perfil institucional quem somos NCS`;
 }

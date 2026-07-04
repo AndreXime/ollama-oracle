@@ -1,6 +1,6 @@
-# NexusCloud Solutions — Cultura, onboarding e dia a dia
+# Lumina Tech — Cultura, onboarding e dia a dia
 
-**Classificação interna:** Colaboradores — NexusCloud  
+**Classificação interna:** Colaboradores — Lumina Tech  
 **Vigência editorial:** abril/2026  
 
 ---
@@ -9,7 +9,7 @@
 
 - **All-hands** mensal com **CEO (Ricardo Almeida Veiga)** e **CTO (Marina Duarte)**; gravação disponível por 30 dias no portal interno.  
 - **Demo Friday** quinzenal: squads apresentam entregas ligadas a serviços **NCS-*** e métricas de **SLO**.  
-- **Canais obrigatórios:** Slack workspace `nexuscloud.internal` (canais `#incidentes`, `#release-train`, `#finops-alerts` conforme função).
+- **Canais obrigatórios:** Slack workspace `lumina.internal` (canais `#incidentes`, `#release-train`, `#finops-alerts` conforme função).
 
 ---
 
