@@ -10,11 +10,11 @@ services:
     mem_limit: 512m
     cpus: "0.5"
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v2/heartbeat')"]
+      test: ["CMD", "/bin/bash", "-c", "echo > /dev/tcp/127.0.0.1/8000"]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 15s
+      start_period: 30s
 
   ollama:
     build:
