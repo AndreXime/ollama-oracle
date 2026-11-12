@@ -24,10 +24,10 @@ export function MessageBubble({ role, content, isPending = false }: MessageBubbl
 	return (
 		<div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
 			<div
-				className={`max-w-[min(100%,42rem)] rounded-2xl px-4 py-3 text-[15px] leading-relaxed ${
+				className={`max-w-[min(100%,42rem)] px-4 py-3 text-[15px] leading-relaxed ${
 					isUser
-						? "bg-accent text-white rounded-br-md"
-						: "bg-surface-raised text-slate-100 border border-surface-border rounded-bl-md"
+						? "rounded-2xl rounded-br-md bg-accent text-white shadow-[0_6px_18px_-10px_rgba(15,107,107,0.65)]"
+						: "rounded-2xl rounded-bl-md border border-border bg-surface-raised text-ink shadow-[0_8px_22px_-14px_rgba(12,27,51,0.35)]"
 				}`}
 			>
 				{isUser ? (
@@ -37,7 +37,7 @@ export function MessageBubble({ role, content, isPending = false }: MessageBubbl
 						<AssistantTypingDots />
 					</div>
 				) : (
-					<div className="prose prose-invert prose-sm max-w-none prose-p:my-2 prose-headings:mt-3 prose-headings:mb-1 prose-ul:my-2 prose-pre:bg-slate-900 prose-pre:border prose-pre:border-surface-border">
+					<div className="prose prose-sm max-w-none prose-headings:font-serif prose-headings:text-ink prose-p:text-ink prose-p:my-2 prose-headings:mt-3 prose-headings:mb-1 prose-ul:my-2 prose-a:text-accent prose-strong:text-ink prose-code:text-accent-muted prose-pre:bg-paper prose-pre:border prose-pre:border-border">
 						<ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
 					</div>
 				)}

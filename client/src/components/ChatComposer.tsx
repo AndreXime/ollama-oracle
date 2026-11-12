@@ -7,12 +7,6 @@ interface ChatComposerProps {
 	readonly onSend: () => void;
 }
 
-const textareaClass =
-	"flex-1 min-h-[48px] max-h-40 w-full rounded-xl bg-transparent px-1 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-0 resize-y";
-
-const buttonClass =
-	"shrink-0 rounded-xl bg-accent hover:bg-accent-muted px-5 py-3 text-sm font-medium text-white disabled:opacity-50 lg:min-w-[112px] lg:self-stretch lg:flex lg:items-center lg:justify-center lg:py-0";
-
 export function ChatComposer({ input, loading, onInputChange, onSend }: ChatComposerProps) {
 	const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === "Enter" && !e.shiftKey) {
@@ -23,17 +17,22 @@ export function ChatComposer({ input, loading, onInputChange, onSend }: ChatComp
 
 	return (
 		<div className="shrink-0">
-			<div className="flex flex-col gap-2 lg:flex-row lg:items-stretch">
+			<div className="flex flex-col gap-2 rounded-xl border border-border bg-surface-raised p-2 shadow-[0_10px_28px_-18px_rgba(12,27,51,0.4)] sm:flex-row sm:items-stretch">
 				<textarea
-					className={`${textareaClass} rounded-xl bg-surface-raised border border-surface-border px-4 focus:ring-2 focus:ring-accent/50 lg:self-start`}
-					placeholder="Pergunte algo sobre a base em data_source…"
+					className="flex-1 min-h-12 max-h-40 w-full resize-y rounded-lg bg-transparent px-3 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:outline-none sm:self-start"
+					placeholder="Pergunte sobre políticas, cursos ou onboarding…"
 					rows={2}
 					value={input}
 					disabled={loading}
 					onChange={(e) => onInputChange(e.target.value)}
 					onKeyDown={onKeyDown}
 				/>
-				<button type="button" className={buttonClass} disabled={loading || !input.trim()} onClick={onSend}>
+				<button
+					type="button"
+					className="shrink-0 rounded-lg bg-accent px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-muted disabled:opacity-50 sm:min-w-28 sm:self-stretch sm:flex sm:items-center sm:justify-center sm:py-0"
+					disabled={loading || !input.trim()}
+					onClick={onSend}
+				>
 					Enviar
 				</button>
 			</div>
