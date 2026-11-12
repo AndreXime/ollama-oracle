@@ -163,49 +163,47 @@ export function ChatWindow({ askRequest = null, onAskHandled, onQuestionSent, on
 	);
 
 	return (
-		<div className="flex flex-col flex-1 w-full min-h-0 mx-auto px-4 pb-4 lg:px-8 max-w-3xl">
-			<div className="flex flex-col flex-1 min-h-0">
-				{!hasMessages ? (
-					<div className="empty-rise flex flex-1 flex-col items-center justify-center gap-7 min-h-0 py-8">
-						<AtlasLogo />
-						<p className="max-w-md text-center text-sm text-ink-muted leading-relaxed">
-							Clique numa pergunta abaixo ou digite a sua. Respostas com base na Atlas Academy e fontes
-							citadas.
+		<div className="mx-auto flex h-full min-h-0 w-full max-w-3xl flex-1 flex-col px-4 pb-4 pt-4 lg:px-8">
+			{!hasMessages ? (
+				<div className="empty-rise flex min-h-0 flex-1 flex-col items-center justify-center gap-7 py-8">
+					<AtlasLogo />
+					<p className="max-w-md text-center text-sm text-ink-muted leading-relaxed">
+						Clique numa pergunta abaixo ou digite a sua. Respostas com base na Atlas Academy e fontes
+						citadas.
+					</p>
+					<div className="w-full max-w-2xl space-y-1">{composerBlock}</div>
+					{error && (
+						<p className="text-sm text-danger text-center px-2" role="alert">
+							{error}
 						</p>
-						<div className="w-full max-w-2xl shrink-0 space-y-1">{composerBlock}</div>
+					)}
+				</div>
+			) : (
+				<div className="flex min-h-0 flex-1 flex-col gap-3">
+					<header className="shrink-0 border-b border-border pb-3">
+						<AtlasLogo compact />
+					</header>
+					<div className="min-h-0 flex-1 overflow-y-auto space-y-4 py-1">
+						{messages.map((msg) => (
+							<div key={msg.id}>
+								<MessageBubble
+									role={msg.role}
+									content={msg.content}
+									isPending={msg.role === "assistant" && msg.isStarted === false && loading}
+								/>
+								{msg.role === "assistant" && msg.sources && <SourcesList sources={msg.sources} />}
+							</div>
+						))}
 						{error && (
-							<p className="text-sm text-danger text-center px-2 shrink-0" role="alert">
+							<p className="text-sm text-danger" role="alert">
 								{error}
 							</p>
 						)}
+						<div ref={bottomRef} />
 					</div>
-				) : (
-					<>
-						<header className="shrink-0 border-b border-border py-3">
-							<AtlasLogo compact />
-						</header>
-						<div className="h-[60dvh] min-h-0 shrink-0 overflow-y-auto py-3 space-y-4">
-							{messages.map((msg) => (
-								<div key={msg.id}>
-									<MessageBubble
-										role={msg.role}
-										content={msg.content}
-										isPending={msg.role === "assistant" && msg.isStarted === false && loading}
-									/>
-									{msg.role === "assistant" && msg.sources && <SourcesList sources={msg.sources} />}
-								</div>
-							))}
-							{error && (
-								<p className="text-sm text-danger" role="alert">
-									{error}
-								</p>
-							)}
-							<div ref={bottomRef} />
-						</div>
-						<div className="shrink-0 border-t border-border pt-3 pb-2">{composerBlock}</div>
-					</>
-				)}
-			</div>
+					<div className="shrink-0 border-t border-border pt-3">{composerBlock}</div>
+				</div>
+			)}
 		</div>
 	);
 }

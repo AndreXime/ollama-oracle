@@ -23,14 +23,14 @@ export function OraclePage() {
 
 	return (
 		<div className="flex flex-1 min-h-0 flex-col">
-			<div className="flex flex-1 min-h-0 flex-col">
+			<div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
 				<ChatWindow askRequest={askRequest} onAskHandled={handleAskHandled} onBusyChange={setBusy} />
 			</div>
-			<footer className="shrink-0 border-t border-border bg-surface/80 px-4 py-4 sm:px-6">
+			<section className="shrink-0 border-t border-border bg-surface px-4 py-5 sm:px-6">
 				<div className="mx-auto max-w-3xl">
 					<PromptPanel onSelectPrompt={ask} disabled={busy} />
 				</div>
-			</footer>
+			</section>
 		</div>
 	);
 }
