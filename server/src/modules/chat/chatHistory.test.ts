@@ -27,7 +27,7 @@ describe("buildRetrievalQuery", () => {
 
 	test("enriquece pergunta sobre nome da empresa", () => {
 		const q = buildRetrievalQuery("Como é o nome da empresa?");
-		expect(q).toContain("Lumina Tech");
+		expect(q).toContain("Atlas Academy");
 		expect(q).toContain("institucional");
 	});
 });

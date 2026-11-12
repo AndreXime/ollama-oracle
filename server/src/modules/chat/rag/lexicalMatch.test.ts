@@ -16,7 +16,7 @@ describe("lexicalOverlapScore", () => {
 	test("aceita prefixo parcial (typo) e metadata source", () => {
 		const doc = new Document({
 			pageContent: "Perfil da empresa brasileira",
-			metadata: { source: "institucional_lumina.md" },
+			metadata: { source: "institucional_atlas.md" },
 		});
 		expect(lexicalOverlapScore("nome empres", doc)).toBeGreaterThan(0);
 	});
