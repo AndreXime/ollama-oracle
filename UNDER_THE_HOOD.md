@@ -4,10 +4,11 @@ Este documento explica **como o projeto funciona internamente** (ingestão, inde
 
 ## Visão geral (arquitetura)
 
-- **`server/`**: API (Hono) + pipeline de ingestão (LangChain) + integrações (Chroma + Ollama).
-- **`client/`**: UI que consome o endpoint de chat.
+- **`server/`**: API (Hono) + pipeline de ingestão (LangChain) + integrações (Chroma + Ollama). Persona do assistente: **Atlas** (Atlas Academy).
+- **`client/`**: UI com rotas `/` (Oracle: painel de perguntas no rodapé + chat) e `/como-funciona` (explicação do pipeline). Consome `POST /chat`.
 - **Chroma**: banco vetorial onde os *chunks* (trechos) são armazenados com embeddings.
 - **Ollama**: roda o modelo de chat e o modelo de embeddings localmente.
+
 
 ## Fluxo de ingestão (indexação da base)
 

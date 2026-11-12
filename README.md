@@ -1,6 +1,6 @@
 # Ollama Oracle
 
-Chatbot corporativo com **RAG local**: documentos em `data_source/`, embeddings e busca vetorial no **ChromaDB**, geração com **Ollama**. Monorepo em **Bun** com API (**Hono** + TypeScript) e interface (**React** + **Vite** + **Tailwind CSS v4**).
+Assistente interno da **Atlas Academy** (universidade corporativa fictícia) com **RAG local**: documentos em `data_source/`, embeddings e busca vetorial no **ChromaDB**, geração com **Ollama**. Demo de portfólio com painel de perguntas por área e página “Como funciona”. Monorepo em **Bun** com API (**Hono** + TypeScript) e interface (**React** + **Vite** + **Tailwind CSS v4**).
 
 Para detalhes "por baixo dos panos" (ingest, partes vs chunks, RAG/streaming, env vars), veja [UNDER_THE_HOOD.md](UNDER_THE_HOOD.md).
 
@@ -12,7 +12,12 @@ Para detalhes "por baixo dos panos" (ingest, partes vs chunks, RAG/streaming, en
 | API | Hono, Zod, LangChain.js, `@langchain/ollama`, `@langchain/community` (Chroma) |
 | IA | Ollama — chat `qwen2.5:3b`, embeddings `bge-m3` |
 | Vetores | ChromaDB |
-| UI | React, Vite, TailwindCSS |
+| UI | React, Vite, TailwindCSS, React Router |
+
+## O que a demo mostra
+
+- **Oracle** (`/`): abas Onboarding / RH / Cursos / TI com perguntas prontas no rodapé, chat com stream e fontes.
+- **Como funciona** (`/como-funciona`): pipeline docs → embeddings → retrieval → resposta + fontes.
 
 ## Pré-requisitos
 
@@ -36,7 +41,7 @@ cp .env.example .env
 
 ## Indexação (ingestão)
 
-Os arquivos em `data_source/` são lidos, fragmentados e enviados ao Chroma com `bge-m3`. Ao trocar `OLLAMA_EMBED_MODEL`, reindexe com `bun run ingest`.
+Os arquivos em `data_source/` (políticas, cursos e onboarding da Atlas Academy) são lidos, fragmentados e enviados ao Chroma com `bge-m3`. Ao trocar `OLLAMA_EMBED_MODEL`, reindexe com `bun run ingest`.
 
 ```bash
 bun run ingest
